@@ -1,0 +1,33 @@
+{
+  "name": "palmolive-shooter",
+  "version": "0.0.1",
+  "description": "Extension Game for Palmolive",
+  "main": "index.js",
+  "scripts": {
+    "dev": "run-p start watch:css",
+    "scss": "node-sass --output-style compressed -o public/css public/scss",
+    "watch:css": "onchange 'public/scss' -- npm run scss",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/winstrike/hyperx-landing.git"
+  },
+  "author": "Winstrike Special Projects",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/winstrike/hyperx-landing/issues"
+  },
+  "homepage": "https://github.com/winstrike/hyperx-landing#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "moment": "^2.29.1",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "node-sass": "^5.0.0",
+    "npm-run-all": "^4.1.5",
+    "onchange": "^7.1.0"
+  }
+}
