@@ -331,7 +331,7 @@ class Enemy{
 
 	reborn() {
 		this.y = random(0, H);
-		this.x = random(H, W);
+		this.x = random(W+400, W);
 		
 		let enemyLottery = random(1,4);
         this.image = {};
@@ -340,6 +340,7 @@ class Enemy{
 			this.speed = random(4,8);
             this.image = met1;
             this.image.width = H/8;
+            this.image.height = H/8;
 			this.life = 2;
 			this.point = 2;
 			this.radius = H/8;
@@ -349,6 +350,7 @@ class Enemy{
 			this.speed = random(4,8);
             this.image = met2;
             this.image.width = H/10;
+            this.image.height = H/10;
 			this.life = 2;
 			this.point = 2;
 			this.radius = H/10;
@@ -360,6 +362,7 @@ class Enemy{
 		if (this.type == 1 && this.life == 1) {
 			this.image = enemyImg1b;
             this.image.width = H/10;
+            this.image.height = H/10;
 			this.y +=this.speed;
 			this.x += this.speed * this.dirPostHit;
 		} else {
