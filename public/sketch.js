@@ -63,7 +63,9 @@ function startWindow(state) {
     if(state) {
         $('#startScreen').show();
         $('#defaultCanvas0').hide();
+        $('#blast').hide();
     } else {
+        $('#blast').show();
         $('#startScreen').hide();
         $('#defaultCanvas0').show();
     }
@@ -253,9 +255,13 @@ function keyPressed() {
 
 		if (key === ' ') {
             bullets.push(new Bullet(bird.pos.x, bird.pos.y));
-            console.log(bird);
+            // console.log(bird);
 		}
 }
+
+$('#blast').on('click', function(){
+    bullets.push(new Bullet(bird.pos.x, bird.pos.y));
+});
 
 function bulletMove() {
 	for (let i = 0; i < bullets.length; i++) {
