@@ -6,6 +6,9 @@ const public = path.join(__dirname, "public");
 app.get("/", function(req, res) {
 	res.sendFile(path.join(public, "video_overlay.html"));
 });
+app.get("/test", function(req, res) {
+	res.sendFile(path.join(public, "index.html"));
+});
 app.use("/", express.static(public));
 
 const port = 80;
