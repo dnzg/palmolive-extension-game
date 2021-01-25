@@ -7,7 +7,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/addons/p5.sound.min.js"></script>
     <style>
+      @font-face {
+        font-family: "Mario";
+        src: url(mario.ttf) format("ttf");
+        font-weight: 400;
+      }
+
       * {
+        font-family: "Mario";
         user-select: none;
         -webkit-user-drag: none;
       }
@@ -21,7 +28,8 @@
         display: block;
       }
       #startScreen {
-        background: #A9C240;
+        background: #A9C23F;
+        /* background: #000; */
         display: none;
         height: 100vh;
         width: 100vw;
@@ -32,11 +40,63 @@
         right: 12px; bottom: 12px;
         width: 64px; height: 64px;
       }
+      header {
+        position: absolute;
+        width: 100%; height: 10%;
+        padding: 10px 20px;
+        color: #fff;
+        box-sizing: border-box;
+        border-bottom: 2px solid #fff;
+        display: flex;
+        align-items: center;
+        display: none;
+
+        backdrop-filter: blur(4px);
+      }
+      #scoreHead {
+        color: #A9C23F;
+      }
+      #scoreLeft {
+        position: absolute;
+        left: 20px;
+        bottom: 20px;
+        color: #fff;
+        line-height: 1;
+      }
+      #scoreLeft h2 {
+        color: #A9C23F;
+        font-size: 2.25em;
+        margin-bottom: 0;
+      }
+      #scoreLeft h3 {
+        font-size: 1.25em;
+        margin-top: .75em;
+      }
     </style>
   </head>
   <body ontouchstart="countTouches(event)" ontouchend="countTouches(event)">
-    <div id="gameoverscreen" style="display:none; position: absolute; text-align: center; margin: auto; top: 0; bottom: 0; left: 0; right: 0; width: 50%; height: 80%; background-color: #026747;">
-      <img src="assets/again.png" style="width: 50%; cursor: pointer;" onclick="Reset()">
+    <div id="scoreLeft" style="display: none;">
+      <h2>0</h2>
+      <h3>Player_1</h3>
+    </div>
+    <header>
+      <img src="assets/newgame.png" style="height: 100%;cursor: pointer;margin-right: 10px;"  onclick="gameoverscreen(); Reset()"/>
+      <img src="assets/leaderboard.png" style="height: 100%;cursor: pointer;margin-right: 20px;"/>
+      Мой рекорд: <span id="scoreHead">0</span>
+      <img src="assets/soundoff.png" style="height: 100%; cursor: pointer;margin-left: auto;"/>
+    </header>
+    <div id="timeout" style="display:none; position: absolute; text-align: center; margin: auto; top: 0; bottom: 0; left: 0; right: 0; width: 50%; height: 80%; background-color: #026747; color: #fff;">0</div>
+    <div id="gameoverscreen" style="display: none; z-index: 9998; box-sizing:border-box; position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%; height: 100%; backdrop-filter: blur(8px);">
+      <div id="gameoverInside" style="position: absolute; z-index: 9999; box-sizing:border-box; text-align: center; margin: auto; top: 0; bottom: 0; left: 0; right: 0; width: 50%; height: 60%; background-image: url(assets/gameoverbg.png); background-size: contain; background-repeat: no-repeat; background-position: center; display: flex; align-items: center;">
+        <div style="display: block;">
+        <h2 style="color: #fff; font-size: 1.25em;">Game Over</h2>
+        <h3 style="color: #A9C23F; font-size: 2.25em;">0</h3>
+        <img src="assets/again.png" style="width:40%; cursor: pointer;" onclick="Reset()">
+        <img src="assets/leaderboard2.png" style="width: 40%; cursor: pointer;" onclick="Reset()">
+        <img src="assets/end.png" style="width: 40%;margin-top: 16px; cursor: pointer;" onclick="Reset()">
+      </div>
+      </div>
+      
     </div>
     <div id="blast"></div>
     <div id="startScreen">

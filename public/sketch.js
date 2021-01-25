@@ -1,31 +1,33 @@
 
+$(window).on('load resize', function() {
+    // if ($(window).width() <= '1280') {}
+    $('header').height($(window).width()/15);
+    $('#gameoverInside').height(0.89*$(window).width()/2).width($(window).width()/2);
+});
+
+const W = window.innerWidth;
+const H = window.innerHeight;
 const MAX_ENEMY = 18;
 const MAX_LIFE = 3;
+const TimeoutBeforeGame = 3;
 
-let spaceShip;
 let enemies = [];
 let bullets = [];
 let explosions = [];
 let explosionAnim = [];
-let spaceShipImg;
 let bulletImg;
-let enemyImg1;
 let enemyImg1b;
-let state = 0;
 
-
-
-const W = window.innerWidth;
-const H = window.innerHeight;
 var isMenu = 1;
+let state = 0;
 var score = 0;
 var LastScore;
+
 var pipe1;
 var pipe2;
 var pipe3;
 var bird;
 let img1;
-let img2;
 let back;
 let flap;
 let met1;
@@ -40,10 +42,12 @@ var scrollSpeed = 0.65;
 
 function preload() {
     img1 = loadImage('assets/frame-1.png');
-    img2 = loadImage('assets/frame-2.png');
     back = loadImage('assets/bg.jpg');
+
     flap = loadSound('sounds/flap.mp3');
-    gameover = loadSound('sounds/gameover.wav');
+    gameover = loadSound('sounds/gameover.mp3');
+    blastsound = loadSound('sounds/blast.mp3');
+    timeoutsound = loadSound('sounds/timer2.mp3');
 
     met1 = loadImage('assets/m1.png');
     met2 = loadImage('assets/m2.png');
@@ -53,66 +57,85 @@ function preload() {
 	bulletImg = loadImage('assets/bullet.png');
 	enemyImg1 = loadImage('assets/enemy1.png');
 	enemyImg1b = loadImage('assets/m1b.png');
-	myFont = loadFont('assets/8-bit-pusab.ttf');
+	myFont = loadFont('assets/mario.ttf');
 	for (let i = 1; i<7; i++) {
-		explosionAnim.push(loadImage('assets/expl'+i+'.png'));
+        explosionAnim.push(loadImage('assets/expl'+i+'.png'));
 	}
 }
 
 function startWindow(state) {
     if(state) {
         $('#startScreen').show();
+        $('header').hide();
+        $('#scoreLeft').hide();
         $('#defaultCanvas0').hide();
         $('#blast').hide();
     } else {
         $('#blast').show();
         $('#startScreen').hide();
         $('#defaultCanvas0').show();
+        $('header').css('display', 'flex');
+        $('#scoreLeft').show();
         $('#gameoverscreen').hide();
     }
 }
 
 function gameoverscreen() {
+    gameover.play();
     ResetGameover();
-    console.log('бывает');
-    // bird.filter(BLUR, 100);
-    // ba
-    // saveCanvas(canvas, "scr", "png");
-    // canvas.filter(BLUR, 10);
-    // canvasimg = loadImage(canvas);
-    $('#gameoverscreen').show();
-    console.log(canvas);
-    // filter(BLUR, 5);
     enemies = [];
+    $('#gameoverInside h3').text(s(score));
+    $('#gameoverscreen').show();
+}
+
+function timeoutscreen() {
+    $('#timeout').show();
+
+    for (let i = 1; i <= TimeoutBeforeGame+1; i++) {
+        if(i==TimeoutBeforeGame+1){
+            $('#timeout').text(0);
+        } else {
+            setTimeout(() => {
+                timeoutsound.play();
+                $('#timeout').text(i);
+            }, i*1000);
+        }
+    }
+    
+    setTimeout(() => {
+        $('#timeout').hide();
+        canvas = createCanvas(W, H);
+        bird = new Bird();
+        frameRate(60);
+        score = 0;
+        if (isMenu == 1) {
+            isMenu = 0;
+        } else if (isMenu == 0) {
+            isMenu = 1;
+        }
+        for (let i=0; i<MAX_ENEMY/2; i++) {
+            enemies[i] = new Enemy();
+        }
+    }, (TimeoutBeforeGame+1)*1000);
 }
 
 function Reset() {
     startWindow(false);
-    canvas = createCanvas(W, H);
-    bird = new Bird();
-    frameRate(60);
-    score = 0;
-    if (isMenu == 1) {
-        isMenu = 0;
-    } else if (isMenu == 0) {
-        isMenu = 1;
-    }
-    for (let i=0; i<MAX_ENEMY; i++) {
-		enemies[i] = new Enemy();
-	}
+
+    timeoutscreen();
 }
 
 function ResetGameover() {
-    // startWindow(false);
-    // createCanvas(W, H);
-    // bird = new Bird();
-    // frameRate(60);
-    // score = 0;
     if (isMenu == 1) {
         isMenu = 0;
     } else if (isMenu == 0) {
         isMenu = 1;
     }
+}
+
+function scoreHead(val) {
+    $('#scoreHead').text(val);
+    $('#scoreLeft h2').text(val);
 }
 
 function setup() {
@@ -132,19 +155,15 @@ function draw() {
         image(back, x2, 0, 10*H, H);
         x1 -= scrollSpeed;
         x2 -= scrollSpeed;
-        // pipe1.update();
-        // pipe2.update();
-        // blast.update();
         bird.show();
         bird.update();
 
       
         edges(bird.pos.y, canvas.height);
-        // Score(bird.pos.x, pipe1.x);
-        // Score(bird.pos.x, pipe2.x);
+        Score(bird.pos.x, bird.pos.y);
         if (score % 1 == 0) {
             textSize(32);
-            text(s(LastScore), W / 2, H / 2 - 200);
+            scoreHead(s(LastScore));
         }
         if (x1 < -10*H){
             x1 = 10*H;
@@ -152,15 +171,7 @@ function draw() {
         if (x2 < -10*H){
             x2 = 10*H;
         }
-
-
-
-        // spaceShip.show();
-		// spaceShip.move();
-		// if (spaceShip.life <= 0) {
-		// 	state = 99;
-		// }
-		
+        
 		for (enemy of enemies) {
 			enemy.move();
 			enemy.show();
@@ -177,11 +188,7 @@ function draw() {
 		// Enemy out of screen
 		for (let i = 0; i < enemies.length; i++) {
 			if (intersectWithBird(bird, enemies[i])) {
-                // background(255,0,0);
-                // Reset();
                 gameoverscreen();
-				// spaceShip.life -=1;
-				// enemies[i].reborn();
             }
             if(enemies[i]!==undefined) {
                 if (enemies[i].x < -1*width) {
@@ -200,9 +207,6 @@ function mousePressed() {
     } else {
         bird.vel.y = +10;
     }
-    // blast.vel.y = -10;
-    // blast.vel.x = +1;
-    // flap.play();
 }
 
 function countTouches(event) {
@@ -210,7 +214,8 @@ function countTouches(event) {
 }
 
 function collison(x1, y1, x2, y2, w1, h1, r) {
-    if (x1 + r / 4 >= x2 && x1 - r / 4 <= x2 + w1 && y1 + r / 4 >= y2 && y1 - r / 4 <= y2 + h1) {
+    if (x1 + r / 4 >= x2 && x1 - r / 4 <= x2 + w1
+        && y1 + r / 4 >= y2 && y1 - r / 4 <= y2 + h1) {
         Reset();
         gameoverscreen();
     }
@@ -218,12 +223,9 @@ function collison(x1, y1, x2, y2, w1, h1, r) {
 
 
 function collison_blast(x1, y1, x2, y2, w1, h1, r) {
-    if (x1 + r / 4 >= x2 && x1 - r / 4 <= x2 + w1 && y1 + r / 4 >= y2 && y1 - r / 4 <= y2 + h1) {
-        // Reset();
+    if (x1 + r / 4 >= x2 && x1 - r / 4 <= x2 + w1
+        && y1 + r / 4 >= y2 && y1 - r / 4 <= y2 + h1) {
         // gameover.play();
-        // textSize(32);
-        // text("GAME OVER!", W / 2 - 100, H / 2);
-        // console.log('+1');
     }
 }
 
@@ -235,10 +237,10 @@ function edges(y1, y2) {
 }
 
 function Score(x1, x2) {
-    if (x1 > x2 && x1 > x2 + 5) {
+    // if (x1 > x2 && x1 > x2 + 5) {
         score++;
         LastScore = score;
-    }
+    // }
 }
 
 function s(score) {
@@ -263,7 +265,7 @@ class Bird {
         if (bird.vel.y >= 0) {
             image(img1, this.pos.x - 28, this.pos.y - 26, this.r + 10, this.r + 10);
         } else if (bird.vel.y < 0) {
-            image(img2, this.pos.x - 28, this.pos.y - 26, this.r + 10, this.r + 10);
+            image(img1, this.pos.x - 28, this.pos.y - 26, this.r + 10, this.r + 10);
         }
     }
     update() {
@@ -274,24 +276,24 @@ class Bird {
     }
     
     move() {
-        for (let i = 0; i < 3000; i++) {
-            this.x -= this.speed + i;
-        }
+        // for (let i = 0; i < 3000; i++) {
+            this.x -= this.speed;
+        // }
     }
 
 }
 
 
 function keyPressed() {
-
-		if (key === ' ') {
-            bullets.push(new Bullet(bird.pos.x, bird.pos.y));
-            // console.log(bird);
-		}
+    if (key === ' ') {
+        bullets.push(new Bullet(bird.pos.x, bird.pos.y));
+        blastsound.play();
+    }
 }
 
 $('#blast').on('click', function(){
     bullets.push(new Bullet(bird.pos.x, bird.pos.y));
+    blastsound.play();
 });
 
 function bulletMove() {
@@ -337,7 +339,8 @@ function intersectWithBird(object1, object2) {
 
 
 function explosion(x,y, startFrame) {
-	image(explosionAnim[(frameCount - startFrame) % 6], x, y);
+    // console.log((frameCount - startFrame) % 6);
+    image(explosionAnim[(frameCount - startFrame) % 6], x, y, H/12, H/12);
 }
 class Bullet {
 	constructor(initX, initY) {
@@ -351,7 +354,7 @@ class Bullet {
 		image(blastimg, this.x-3, this.y-3);
 	}
 	move() {
-		this.x += this.speed;
+        this.x += this.speed;
 	}
 }
 
@@ -361,7 +364,7 @@ class Enemy{
 	}
 
 	reborn() {
-		this.y = random(0, H);
+		this.y = random(12+(W/15), H);
 		this.x = random(W+400, W);
 		
 		let enemyLottery = random(1,4);
@@ -394,8 +397,10 @@ class Enemy{
 			this.image = enemyImg1b;
             this.image.width = H/10;
             this.image.height = H/10;
-			this.y +=this.speed;
-			this.x += this.speed * this.dirPostHit;
+			// this.y +=this.speed;
+            this.x -=this.speed * this.dirPostHit;
+            // console.log(this.dirPostHit);
+			// this.x -=this.speed;
 		} else {
 			this.x -=this.speed;
 		}
