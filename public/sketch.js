@@ -82,7 +82,7 @@ function gameoverscreen() {
     // canvasimg = loadImage(canvas);
     $('#gameoverscreen').show();
     console.log(canvas);
-    filter(BLUR, 5);
+    // filter(BLUR, 5);
     enemies = [];
 }
 
@@ -90,7 +90,7 @@ function Reset() {
     startWindow(false);
     canvas = createCanvas(W, H);
     bird = new Bird();
-    frameRate(120);
+    frameRate(60);
     score = 0;
     if (isMenu == 1) {
         isMenu = 0;
