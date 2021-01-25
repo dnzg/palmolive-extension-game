@@ -46,7 +46,7 @@ function preload() {
 
     flap = loadSound('sounds/flap.mp3');
     gameover = loadSound('sounds/gameover.mp3');
-    blastsound = loadSound('sounds/blast.mp3');
+    blastsound = createAudio('sounds/blast.mp3');
     timeoutsound = loadSound('sounds/timer2.mp3');
 
     met1 = loadImage('assets/m1.png');
@@ -89,15 +89,15 @@ function gameoverscreen() {
 }
 
 function timeoutscreen() {
-    $('#timeout').show();
+    $('#timeout').css('display', 'flex');
 
     for (let i = 1; i <= TimeoutBeforeGame+1; i++) {
         if(i==TimeoutBeforeGame+1){
-            $('#timeout').text(0);
+            $('#timeout span').text(0);
         } else {
             setTimeout(() => {
                 timeoutsound.play();
-                $('#timeout').text(i);
+                $('#timeout span').text(i);
             }, i*1000);
         }
     }
@@ -287,6 +287,7 @@ class Bird {
 function keyPressed() {
     if (key === ' ') {
         bullets.push(new Bullet(bird.pos.x, bird.pos.y));
+        blastsound.volume(0.5);
         blastsound.play();
     }
 }
