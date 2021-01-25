@@ -68,15 +68,46 @@ function startWindow(state) {
         $('#blast').show();
         $('#startScreen').hide();
         $('#defaultCanvas0').show();
+        $('#gameoverscreen').hide();
     }
+}
+
+function gameoverscreen() {
+    ResetGameover();
+    console.log('бывает');
+    // bird.filter(BLUR, 100);
+    // ba
+    // saveCanvas(canvas, "scr", "png");
+    // canvas.filter(BLUR, 10);
+    // canvasimg = loadImage(canvas);
+    $('#gameoverscreen').show();
+    console.log(canvas);
+    filter(BLUR, 5);
+    enemies = [];
 }
 
 function Reset() {
     startWindow(false);
-    createCanvas(W, H);
+    canvas = createCanvas(W, H);
     bird = new Bird();
-    frameRate(60);
+    frameRate(120);
     score = 0;
+    if (isMenu == 1) {
+        isMenu = 0;
+    } else if (isMenu == 0) {
+        isMenu = 1;
+    }
+    for (let i=0; i<MAX_ENEMY; i++) {
+		enemies[i] = new Enemy();
+	}
+}
+
+function ResetGameover() {
+    // startWindow(false);
+    // createCanvas(W, H);
+    // bird = new Bird();
+    // frameRate(60);
+    // score = 0;
     if (isMenu == 1) {
         isMenu = 0;
     } else if (isMenu == 0) {
@@ -91,9 +122,6 @@ function setup() {
 
 	// spaceShip = new SpaceShip(MAX_LIFE);
     bird = new Bird();
-    for (let i=0; i<MAX_ENEMY; i++) {
-		enemies[i] = new Enemy();
-	}
 }
 
 function draw() {
@@ -149,13 +177,17 @@ function draw() {
 		// Enemy out of screen
 		for (let i = 0; i < enemies.length; i++) {
 			if (intersectWithBird(bird, enemies[i])) {
-				background(255,0,0);
+                // background(255,0,0);
+                // Reset();
+                gameoverscreen();
 				// spaceShip.life -=1;
-				enemies[i].reborn();
-			}
-			if (enemies[i].x < -1*width) {
-				enemies[i].reborn();
-			}
+				// enemies[i].reborn();
+            }
+            if(enemies[i]!==undefined) {
+                if (enemies[i].x < -1*width) {
+                    enemies[i].reborn();
+                }
+            }
 		}
 		// Bullet's move
 		bulletMove();	
@@ -163,7 +195,11 @@ function draw() {
 }
 
 function mousePressed() {
-    bird.vel.y = -10;
+    if(bird.pos.y > 0) {
+        bird.vel.y = -10;
+    } else {
+        bird.vel.y = +10;
+    }
     // blast.vel.y = -10;
     // blast.vel.x = +1;
     // flap.play();
@@ -176,9 +212,7 @@ function countTouches(event) {
 function collison(x1, y1, x2, y2, w1, h1, r) {
     if (x1 + r / 4 >= x2 && x1 - r / 4 <= x2 + w1 && y1 + r / 4 >= y2 && y1 - r / 4 <= y2 + h1) {
         Reset();
-        // gameover.play();
-        textSize(32);
-        text("GAME OVER!", W / 2 - 100, H / 2);
+        gameoverscreen();
     }
 }
 
@@ -196,10 +230,7 @@ function collison_blast(x1, y1, x2, y2, w1, h1, r) {
 function edges(y1, y2) {
     // if (y1 > y2 || y1 < 0) {
     if (y1 > y2) {
-        Reset();
-        // gameover.play();
-        textSize(32);
-        text("GAME OVER!", W / 2 - 100, H / 2);
+        gameoverscreen();
     }
 }
 
@@ -371,6 +402,7 @@ class Enemy{
 	}
 
 	show() {
-		image(this.image, this.x-15, this.y-15);
+        image(this.image, this.x-15, this.y-15);
+        // filter(BLUR, 10);
 	}
 }

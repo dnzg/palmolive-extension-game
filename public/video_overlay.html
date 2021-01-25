@@ -35,6 +35,9 @@
     </style>
   </head>
   <body ontouchstart="countTouches(event)" ontouchend="countTouches(event)">
+    <div id="gameoverscreen" style="display:none; position: absolute; text-align: center; margin: auto; top: 0; bottom: 0; left: 0; right: 0; width: 50%; height: 80%; background-color: #026747;">
+      <img src="assets/again.png" style="width: 50%; cursor: pointer;" onclick="Reset()">
+    </div>
     <div id="blast"></div>
     <div id="startScreen">
       <img src="assets/vitbal.png" style="position: absolute; width: 80%; top: 10%; margin: auto; left: 0; right: 0;"/>
