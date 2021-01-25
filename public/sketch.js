@@ -328,7 +328,7 @@ function intersectWith(object1, object2) {
 }
 function intersectWithBird(object1, object2) {
 	let distance = dist(object1.pos.x, object1.pos.y, object2.x, object2.y);
-	if (distance < object1.radius + object2.radius) {
+	if (distance < object1.radius + object2.radius - 20) {
 		return true;
 	} else {
 		return false;
@@ -374,7 +374,7 @@ class Enemy{
             this.image.height = H/8;
 			this.life = 2;
 			this.point = 2;
-			this.radius = H/8;
+			this.radius = H/12;
 			this.dirPostHit = Math.pow(-1, Math.round(random(1,2))) * random(0.2,0.5);
 		} else if (enemyLottery >= 2 && enemyLottery < 4 ) {
 			this.type = 1;
@@ -384,7 +384,7 @@ class Enemy{
             this.image.height = H/10;
 			this.life = 2;
 			this.point = 2;
-			this.radius = H/10;
+			this.radius = H/14;
 			this.dirPostHit = Math.pow(-1, Math.round(random(1,2))) * random(0.2,0.5);
 		} 
 	}
