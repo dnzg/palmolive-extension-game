@@ -3,6 +3,7 @@ $(window).on('load resize', function() {
     // if ($(window).width() <= '1280') {}
     $('header').height($(window).width()/15);
     $('#gameoverInside').height(0.89*$(window).width()/2).width($(window).width()/2);
+    // $('#timeout').height(0.89*$(window).width()/2).width($(window).width()/2);
 });
 
 const W = window.innerWidth;
@@ -70,6 +71,7 @@ function startWindow(state) {
         $('#scoreLeft').hide();
         $('#defaultCanvas0').hide();
         $('#blast').hide();
+        $('#gameoverscreen').hide();
     } else {
         $('#blast').show();
         $('#startScreen').hide();
@@ -82,6 +84,10 @@ function startWindow(state) {
 
 function gameoverscreen() {
     gameover.play();
+    $('#blocker').show();
+    setTimeout(() => {
+        $('#blocker').hide();
+    }, 1000);
     ResetGameover();
     enemies = [];
     $('#gameoverInside h3').text(s(score));
@@ -89,7 +95,7 @@ function gameoverscreen() {
 }
 
 function timeoutscreen() {
-    $('#timeout').css('display', 'flex');
+    $('#timeoutscreen').show();
 
     for (let i = 1; i <= TimeoutBeforeGame+1; i++) {
         if(i==TimeoutBeforeGame+1){
@@ -103,7 +109,7 @@ function timeoutscreen() {
     }
     
     setTimeout(() => {
-        $('#timeout').hide();
+        $('#timeoutscreen').hide();
         canvas = createCanvas(W, H);
         bird = new Bird();
         frameRate(60);
@@ -116,12 +122,17 @@ function timeoutscreen() {
         for (let i=0; i<MAX_ENEMY/2; i++) {
             enemies[i] = new Enemy();
         }
+
+        startWindow(false);
     }, (TimeoutBeforeGame+1)*1000);
 }
 
-function Reset() {
-    startWindow(false);
+function leaderboard(state) {
+    if(state) $('#leaderboard').show();
+    else $('#leaderboard').hide();
+}
 
+function Reset() {
     timeoutscreen();
 }
 
@@ -202,10 +213,10 @@ function draw() {
 }
 
 function mousePressed() {
-    if(bird.pos.y > 0) {
-        bird.vel.y = -10;
+    if(bird.pos.y > W/15) {
+        bird.vel.y = -8;
     } else {
-        bird.vel.y = +10;
+        bird.vel.y = +8;
     }
 }
 
