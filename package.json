@@ -4,11 +4,12 @@
   "description": "Extension Game for Palmolive",
   "main": "index.js",
   "scripts": {
-    "dev": "run-p start watch:css functions",
+    "dev": "run-p start watch:css functions browser",
     "functions": "cd functions && npm run serve",
     "scss": "node-sass --output-style compressed -o public/css public/scss",
     "watch:css": "onchange 'public/scss' -- npm run scss",
-    "start": "node index.js"
+    "start": "node index.js",
+    "browser": "browser-sync 'http://localhost' 'public' -w"
   },
   "repository": {
     "type": "git",

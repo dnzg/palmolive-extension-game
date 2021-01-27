@@ -15,11 +15,14 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="msapplication-config" content="assets/favicon/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/p5.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/addons/p5.sound.min.js"></script>
+
+    <script src="js/p5.min.js"></script>
+    <script src="js/p5.sound.min.js"></script>
   </head>
   <body ontouchstart="countTouches(event)" ontouchend="countTouches(event)">
+    <img src="assets/cardh.png" style="display: none;">
     <div id="blocker"></div>
+
     <div id="leaderboard">
       <div class="header">
         <img src="assets/back.png" onclick="leaderboard(false)" />
@@ -58,12 +61,14 @@
       <h2>0</h2>
       <h3>Player_1</h3>
     </div>
+
     <header>
-      <img src="assets/newgame.png" style="height: 100%;cursor: pointer;margin-right: 10px;"  onclick="gameoverscreen(); Reset()"/>
+      <img src="assets/newgame.png" style="height: 100%;cursor: pointer;margin-right: 10px;"  onclick="Reset()"/>
       <img src="assets/leaderboard.png" style="height: 100%;cursor: pointer;margin-right: 20px;" onclick="leaderboard(true)" />
       Мой рекорд: <span id="scoreHead">0</span>
       <img src="assets/soundoff.png" style="height: 100%; cursor: pointer;margin-left: auto;"/>
     </header>
+
     <div id="timeoutscreen">
       <div id="timeout">
         <span style="margin: auto;">0</span>
@@ -79,6 +84,42 @@
         </div>
       </div>
     </div>
+
+    <div id="chooseship" style="display: none;">
+      <div class="container">
+        <h2>Выбери корабль</h2>
+        <div class="row">
+          <div class="card" onclick="chooseShip(0)">
+            <img src="assets/ship1.png"/>
+          </div>
+          <div class="card" onclick="chooseShip(1)">
+            <img src="assets/ship2.png"/>
+          </div>
+          <div class="card" onclick="chooseShip(2)">
+            <img src="assets/ship3.png"/>
+          </div>
+          <div class="card" onclick="chooseShip(3)">
+            <img src="assets/ship4.png"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="spacedetails" style="display: none;">
+      <div class="container">
+        <div class="row">
+          <div class="ship">
+            <img src="" data-id="space" />
+          </div>
+          <div class="desc" data-id="desc"></div>
+        </div>
+        <div class="rowDetails">
+          <img src="assets/backDetails.png"/ onclick="detaction(0)">
+          <img src="assets/chooseDetails.png"/ data-id="ship" onclick="detaction(1)">
+        </div>
+      </div>
+    </div>
+
     <div id="gameoverscreen">
       <div id="gameoverInside">
         <div style="display: block;">
@@ -88,19 +129,22 @@
         <img src="assets/leaderboard2.png" onclick="leaderboard(true)">
         <img src="assets/end.png" onclick="startWindow(true)">
       </div>
-      </div>
-      
+      </div>  
     </div>
+
     <div id="blast"></div>
+
     <div id="startScreen">
       <img src="assets/vitbal.png" id="vitbal" />
-      <img src="assets/start.png" id="startButton" onclick="Reset()" />
+      <img src="assets/start.png" id="startButton" onclick="detaction(2)" />
     </div>
+
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>	
 		<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
 		<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-database.js"></script>
-		<script src="fb.js"></script>
-    <script src="jq.js"></script>
-    <script src="sketch.js"></script>
+		<script src="js/fb.js"></script>
+    <script src="js/jq.js"></script>
+    <script src="js/if.js"></script>
+    <script src="js/sketch.js"></script>
   </body>
 </html>
