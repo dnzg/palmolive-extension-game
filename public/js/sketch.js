@@ -2,8 +2,9 @@ let W = $(window).width();
 let H = $(window).height();
 const MAX_ENEMY = 18;
 const MAX_LIFE = 3;
-const COOLDOWNGUN = 3;
-const TimeoutBeforeGame = 3;
+let COOLDOWNGUN;
+let QUAN_BLASTS;
+const TimeoutBeforeGame = 0;
 
 $(window).on('load resize', function() {
     // if ($(window).width() <= '1280') {}
@@ -22,6 +23,7 @@ let explosions = [];
 let explosionAnim = [];
 let bulletImg;
 let enemyImg1b;
+let enemyImg2b;
 
 var isMenu = 1;
 let state = 0;
@@ -40,9 +42,29 @@ let back;
 let flap;
 let met1;
 let met2;
+
+let GunDamage;
+
 let blastimg;
+let laserimg;
+
+let laserGreenimg;
+let laserGreenExpimg;
+let laserGreenCirimg;
+
+let laserVioletExpimg;
+let laserVioletCirimg;
+let laserVioletimg;
+
 let gameover;
 var button;
+
+let blast_sound;
+let laser_sound;
+let freeze_sound;
+let boom_sound;
+
+let GlobalBulletVar;
 
 var x1 = 0;
 var x2;
@@ -58,16 +80,31 @@ function preload() {
 
     flap = loadSound('sounds/flap.mp3');
     gameover = loadSound('sounds/gameover.mp3');
-    blastsound = createAudio('sounds/blast.mp3');
+
+    blast_sound = createAudio('sounds/blast.mp3');
+    laser_sound = createAudio('sounds/laser.mp3');
+    freeze_sound = createAudio('sounds/freeze.mp3');
+    boom_sound = createAudio('sounds/boom.mp3');
+
     timeoutsound = loadSound('sounds/timer2.mp3');
 
     met1 = loadImage('assets/m1.png');
     met2 = loadImage('assets/m2.png');
     blastimg = loadImage('assets/blast.png');
+    laserimg = loadImage('assets/laser.png');
+
+    laserGreenimg = loadImage('assets/laser_green.png');
+    laserGreenExpimg = loadImage('assets/laser_green_exp.png');
+    laserGreenCirimg = loadImage('assets/laser_green_circle.png');
+    
+    laserVioletExpimg = loadImage('assets/laser_violet.png');
+    laserVioletCirimg = loadImage('assets/laser_violet_circle.png');
+    laserVioletimg = loadImage('assets/laser_violet_exp.png');
 
 	bulletImg = loadImage('assets/bullet.png');
 	enemyImg1 = loadImage('assets/enemy1.png');
 	enemyImg1b = loadImage('assets/m1b.png');
+	enemyImg2b = loadImage('assets/m2b.png');
 	myFont = loadFont('assets/mario.ttf');
 	for (let i = 1; i<7; i++) {
         explosionAnim.push(loadImage('assets/expl'+i+'.png'));
@@ -143,16 +180,50 @@ function leaderboard(state) {
 }
 
 function Reset(num) {
+    GlobalBulletVar = num;
     if (num==0) {
         birdImg = img1;
+
+        blastsound=boom_sound;
     } else if(num==1) {
         birdImg = img2;
+
+        blastsound=blast_sound;
     } else if(num==2) {
         birdImg = img3;
+
+        blastsound=laser_sound;
     } else if(num==3) {
         birdImg = img4;
+
+        blastsound=freeze_sound;
     }
     timeoutscreen();
+}
+
+function GlobalBullet(x, y) {
+    if(GlobalBulletVar==0) {
+        var bul = new Bullet(x, y);
+        QUAN_BLASTS=3;
+        COOLDOWNGUN=3;
+        GunDamage=1;
+    } else if(GlobalBulletVar==1) {
+        var bul = new Bullet1(x, y);
+        QUAN_BLASTS=1;
+        COOLDOWNGUN=5;
+        GunDamage=2;
+    } else if(GlobalBulletVar==2) {
+        var bul = new Bullet2(x, y);
+        QUAN_BLASTS=2;
+        COOLDOWNGUN=1.5;
+        GunDamage=2;
+    } else if(GlobalBulletVar==3) {
+        var bul = new Bullet3(x, y);
+        QUAN_BLASTS=1;
+        COOLDOWNGUN=5;
+        GunDamage=2;
+    }
+    return bul;
 }
 
 function ResetGameover() {
@@ -323,8 +394,8 @@ function gun() {
     if(!lockGun) {
         var i = 0;
         var inte = setInterval(() => {
-            bullets.push(new Bullet(bird.pos.x, bird.pos.y));
-            if(i==2) clearInterval(inte);
+            bullets.push(GlobalBullet(bird.pos.x, bird.pos.y));
+            if(i == QUAN_BLASTS-1) clearInterval(inte);
             i++;
         }, 100);
         inte;
@@ -332,6 +403,7 @@ function gun() {
         setTimeout(() => {
             lockGun = false;
         }, COOLDOWNGUN*1000);
+        
         blastsound.volume(0.5);
         blastsound.play();
     }
@@ -343,13 +415,15 @@ function bulletMove() {
 		bullets[i].show();
 		for (let j = 0; j < enemies.length; j++) {
 			if (intersectWith(bullets[i], enemies[j])) {
-				bullets[i].y = - 10;
-				enemies[j].life -=1;
-				if (enemies[j].life == 0) {
-					explosions.push(createVector(enemies[j].x,enemies[j].y, frameCount));
-					enemies[j].reborn();
-					// spaceShip.score += enemies[j].point;
-				}
+                bullets[i].y = - 10;
+                for (let o = 0; o < GunDamage; o++) {
+                    enemies[j].life -=1;
+                    if (enemies[j].life == 0) {
+                        explosions.push(createVector(enemies[j].x,enemies[j].y, frameCount));
+                        enemies[j].reborn();
+                        // spaceShip.score += enemies[j].point;
+                    }
+                }
 				
 			}
 		}
@@ -392,7 +466,58 @@ class Bullet {
 	}
 
 	show() {
-		image(blastimg, this.x-3, this.y-3);
+		image(blastimg, this.x-3, this.y-3, H/25, H/25);
+	}
+	move() {
+        this.x += this.speed;
+	}
+}
+
+class Bullet1 {
+	constructor(initX, initY) {
+		this.x = initX;
+		this.y = initY - 10;
+		this.speed = 20;
+		this.radius = 0;
+	}
+
+	show() {
+        image(laserGreenimg, this.x-3, this.y-3, W/2, 10);
+        image(laserGreenCirimg, this.x-3, this.y-8, 20, 20);
+        image(laserGreenExpimg, this.x-18+W/2, this.y-18, 40, 40);
+	}
+	move() {
+        this.x += this.speed;
+	}
+}
+
+class Bullet2 {
+	constructor(initX, initY) {
+		this.x = initX;
+		this.y = initY - 10;
+		this.speed = 12;
+		this.radius = 0;
+	}
+
+	show() {
+		image(laserimg, this.x-3, this.y-3);
+	}
+	move() {
+        this.x += this.speed;
+	}
+}
+class Bullet3 {
+	constructor(initX, initY) {
+		this.x = initX;
+		this.y = initY - 10;
+		this.speed = 20;
+		this.radius = 0;
+	}
+
+	show() {
+        image(laserVioletimg, this.x-3, this.y-3, W/2, 10);
+        image(laserVioletCirimg, this.x-3, this.y-8, 20, 20);
+        image(laserVioletExpimg, this.x-18+W/2, this.y-18, 40, 40);
 	}
 	move() {
         this.x += this.speed;
@@ -417,19 +542,19 @@ class Enemy{
             this.image.width = H/8;
             this.image.height = H/8;
 			this.life = 2;
-			this.point = 2;
-			this.radius = H/12;
-			this.dirPostHit = Math.pow(-1, Math.round(random(1,2))) * random(0.2,0.5);
+			// this.point = 2;
+			this.radius = H/14;
+			// this.dirPostHit = Math.pow(-1, Math.round(random(1,2))) * random(0.2,0.5);
 		} else if (enemyLottery >= 2 && enemyLottery < 4 ) {
-			this.type = 1;
+			this.type = 2;
 			this.speed = random(4,8);
             this.image = met2;
-            this.image.width = H/10;
-            this.image.height = H/10;
-			this.life = 2;
-			this.point = 2;
-			this.radius = H/14;
-			this.dirPostHit = Math.pow(-1, Math.round(random(1,2))) * random(0.2,0.5);
+            this.image.width = H/7;
+            this.image.height = H/7;
+			this.life = 1;
+			// this.point = 2;
+			this.radius = H/12;
+			// this.dirPostHit = Math.pow(-1, Math.round(random(1,2))) * random(0.2,0.5);
 		} 
 	}
 
@@ -438,10 +563,12 @@ class Enemy{
 			this.image = enemyImg1b;
             this.image.width = H/10;
             this.image.height = H/10;
-			// this.y +=this.speed;
-            // this.x -=this.speed * this.dirPostHit;
-            // console.log(this.dirPostHit);
-			// this.x -=this.speed;
+			this.x -=this.speed;
+		} else if (this.type == 1 && this.life == 1) {
+			this.image = enemyImg2b;
+            this.image.width = H/10;
+            this.image.height = H/10;
+			this.radius = H/10;
 			this.x -=this.speed;
 		} else {
 			this.x -=this.speed;

@@ -2,11 +2,11 @@ function chooseShip(num) {
     $('#chooseship').hide();
 
     const arr = [
-        '<span class="iceColor">Арктический ветер</span><br/>Заморозка препятствий, перезарядка каждые 3 сек',
         '<span class="orangeColor">Цитрусовый взрыв</span><br/>3 заряда атомных бомб',
+        '<span class="iceColor">Арктический ветер</span><br/>Заморозка препятствий, перезарядка каждые 3 сек',
         '<span class="redColor">Очищение и перезагрузка</span><br/>Стреляет скоростными бластерами',
         '<span class="blueColor">Спорт</span><br/>Стреляет мощными энерголучами',
-    ]
+    ];
     var n = num+1;
     $('[data-id="space"]').attr('src', 'assets/ship'+n+'.png');
     $('[data-id="desc"]').html(arr[num]);

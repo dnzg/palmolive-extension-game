@@ -63,7 +63,7 @@
     </div>
 
     <header>
-      <img src="assets/newgame.png" style="height: 100%;cursor: pointer;margin-right: 10px;"  onclick="Reset()"/>
+      <img src="assets/newgame.png" style="height: 100%;cursor: pointer;margin-right: 10px;"  onclick="Reset(GlobalBulletVar)"/>
       <img src="assets/leaderboard.png" style="height: 100%;cursor: pointer;margin-right: 20px;" onclick="leaderboard(true)" />
       Мой рекорд: <span id="scoreHead">0</span>
       <img src="assets/soundoff.png" style="height: 100%; cursor: pointer;margin-left: auto;"/>
@@ -89,11 +89,11 @@
       <div class="container">
         <h2>Выбери корабль</h2>
         <div class="row">
-          <div class="card" onclick="chooseShip(0)">
-            <img src="assets/ship1.png"/>
-          </div>
           <div class="card" onclick="chooseShip(1)">
             <img src="assets/ship2.png"/>
+          </div>
+          <div class="card" onclick="chooseShip(0)">
+            <img src="assets/ship1.png"/>
           </div>
           <div class="card" onclick="chooseShip(2)">
             <img src="assets/ship3.png"/>
@@ -125,7 +125,7 @@
         <div style="display: block;">
         <h2>Game Over</h2>
         <h3>0</h3>
-        <img src="assets/again.png" onclick="Reset()">
+        <img src="assets/again.png" onclick="Reset(GlobalBulletVar)">
         <img src="assets/leaderboard2.png" onclick="leaderboard(true)">
         <img src="assets/end.png" onclick="startWindow(true)">
       </div>
