@@ -188,7 +188,7 @@ function Reset(num) {
     } else if(num==1) {
         birdImg = img2;
 
-        blastsound=blast_sound;
+        blastsound=freeze_sound;
     } else if(num==2) {
         birdImg = img3;
 
@@ -196,7 +196,7 @@ function Reset(num) {
     } else if(num==3) {
         birdImg = img4;
 
-        blastsound=freeze_sound;
+        blastsound=blast_sound;
     }
     timeoutscreen();
 }
@@ -208,7 +208,7 @@ function GlobalBullet(x, y) {
         COOLDOWNGUN=3;
         GunDamage=1;
     } else if(GlobalBulletVar==1) {
-        var bul = new Bullet1(x, y);
+        var bul = new Bullet3(x, y);
         QUAN_BLASTS=1;
         COOLDOWNGUN=5;
         GunDamage=2;
@@ -218,7 +218,7 @@ function GlobalBullet(x, y) {
         COOLDOWNGUN=1.5;
         GunDamage=2;
     } else if(GlobalBulletVar==3) {
-        var bul = new Bullet3(x, y);
+        var bul = new Bullet1(x, y);
         QUAN_BLASTS=1;
         COOLDOWNGUN=5;
         GunDamage=2;
