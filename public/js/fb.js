@@ -21,7 +21,7 @@ function dbWrite(username, score) {
   firebase.database().ref('users/'+username).set(parseInt(score));
 }
 
-dbWrite(makeid(10,0), makeid(10,1));
+dbWrite(makeid(10,0), makeid(3,1));
 
 function makeid(length, type) {
   if(type==1){
