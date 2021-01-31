@@ -7,7 +7,7 @@ app.get("/", function(req, res) {
 	res.sendFile(path.join(public, "video_overlay.html"));
 });
 app.get("/test", function(req, res) {
-	res.sendFile(path.join(public, "index.html"));
+	res.sendFile(path.join(public, "index2.html"));
 });
 app.use("/", express.static(public));
 

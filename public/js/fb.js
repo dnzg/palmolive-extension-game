@@ -21,4 +21,22 @@ function dbWrite(username, score) {
   firebase.database().ref('users/'+username).set(parseInt(score));
 }
 
-dbWrite('dnzg1', '200');
+dbWrite(makeid(10,0), makeid(10,1));
+
+function makeid(length, type) {
+  if(type==1){
+    var characters = "0123456789";
+  } else {
+    var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  }
+	var result = "";
+	var charactersLength = characters.length;
+	for (var i = 0; i < length; i++) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  if(type==1) {
+    return parseInt(result);
+  } else {
+    return result;
+  }
+}

@@ -19,6 +19,7 @@ $(window).on('load resize', function() {
 
 let enemies = [];
 let bullets = [];
+let bonus = [];
 let explosions = [];
 let explosionAnim = [];
 let bulletImg;
@@ -66,6 +67,12 @@ let boom_sound;
 
 let GlobalBulletVar;
 
+let bonusImg;
+let bonus1;
+let bonus2;
+let bonus3;
+let bonus4;
+
 var x1 = 0;
 var x2;
 var scrollSpeed = 0.65;
@@ -101,6 +108,11 @@ function preload() {
     laserVioletCirimg = loadImage('assets/laser_violet_circle.png');
     laserVioletimg = loadImage('assets/laser_violet_exp.png');
 
+    bonus1 = loadImage('assets/bonus1.png');
+    bonus2 = loadImage('assets/bonus2.png');
+    bonus3 = loadImage('assets/bonus3.png');
+    bonus4 = loadImage('assets/bonus4.png');
+
 	bulletImg = loadImage('assets/bullet.png');
 	enemyImg1 = loadImage('assets/enemy1.png');
 	enemyImg1b = loadImage('assets/m1b.png');
@@ -120,7 +132,7 @@ function startWindow(state) {
         $('#blast').hide();
         $('#gameoverscreen').hide();
     } else {
-        $('#blast').show();
+        if(mobileAndTabletCheck()) {$('#blast').show();}
         $('#startScreen').hide();
         $('#defaultCanvas0').show();
         $('header').css('display', 'flex');
@@ -130,6 +142,9 @@ function startWindow(state) {
 }
 
 function gameoverscreen() {
+    enemies=[];
+    bonus=[];
+    bullets=[];
     gameover.play();
     $('#blocker').show();
     setTimeout(() => {
@@ -185,18 +200,22 @@ function Reset(num) {
         birdImg = img1;
 
         blastsound=boom_sound;
+        bonusImg=bonus1;
     } else if(num==1) {
         birdImg = img2;
 
         blastsound=freeze_sound;
+        bonusImg=bonus2;
     } else if(num==2) {
         birdImg = img3;
 
         blastsound=laser_sound;
+        bonusImg=bonus3;
     } else if(num==3) {
         birdImg = img4;
 
         blastsound=blast_sound;
+        bonusImg=bonus4;
     }
     timeoutscreen();
 }
@@ -296,14 +315,36 @@ function draw() {
                     enemies[i].reborn();
                 }
             }
+        }
+        
+
+		// Bonus
+		if (random(1,300) <= 2) {
+			bonus.push(new Bonus);
 		}
+		for (i = 0; i < bonus.length; i++) {
+			bonus[i].move();
+			bonus[i].show();
+			if (intersectWithBird(bird, bonus[i])) {
+                bonus[i].effect(bird);
+				bonus.splice(i, 1);
+                console.log(bird.life);
+            }
+            if(bonus[i]!==undefined){
+                if (bonus[i].x < 0) {
+                    // bonus.splice(1, i);
+                    bonus.splice(i, 1);
+                }
+            }
+		}
+
 		// Bullet's move
 		bulletMove();	
     }
 }
 
 function mousePressed() {
-    if(bird.pos.y > W/15) {
+    if(bird.pos.y > W/7) {
         bird.vel.y = -8;
     } else {
         bird.vel.y = +8;
@@ -359,7 +400,9 @@ class Bird {
         this.radius = 22;
 
         this.x = this.pos.x;
-		this.y = this.pos.y;
+        this.y = this.pos.y;
+        
+        this.life=1;
 		
     }
     show() {
@@ -578,5 +621,28 @@ class Enemy{
 	show() {
         image(this.image, this.x-15, this.y-15);
         // filter(BLUR, 10);
+	}
+}
+
+
+class Bonus {
+	constructor(type = 0) { //random ensuite
+		this.x = random(W+400, W);
+		this.y = random(12+(W/15), H);
+		this.speed = 6;
+		this.type = type;
+		this.radius = H/15;
+	}
+
+	move(){
+		this.x -= this.speed;
+	}
+
+	show() {
+		image(bonusImg, this.x - this.radius, this.y - this.radius, 0.436*H/15, H/15);
+	}
+
+	effect(player) {
+        player.life +=1;
 	}
 }

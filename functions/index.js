@@ -21,14 +21,20 @@ admin.initializeApp({
 });
 
 const db = admin.database();
-
-exports.leaderUpdate = functions.database.ref("users/{userId}")
+const ref = "users/{userId}";
+exports.leaderUpdate = functions.database.ref(ref)
     .onWrite(async (change, context) => {
-      console.log(change);
-      console.log(context);
-      const nickname = "dnzg";
-      const ref = db.ref("leaderboard/"+nickname);
-
-      ref.set(200);
+      const users = (await db.ref("users").once("value")).val();
+      const rating = Object.keys(users).map((key) => [key, users[key]]);
+      rating.sort(function(a, b) {
+        if (a[1] > b[1]) {
+          return -1;
+        }
+        if (a[1] < b[1]) {
+          return 1;
+        }
+        return 0;
+      });
+      db.ref("leaderboard").set(rating.slice(0, 10));
     },
     );
