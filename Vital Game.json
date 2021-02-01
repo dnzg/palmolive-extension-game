@@ -1,0 +1,86 @@
+{
+  "allowHttpBackend": false,
+  "backendCommand": "",
+  "backendFolderName": "",
+  "certificateExceptions": [],
+  "extensionViews": [
+    {
+      "channelId": "577038969",
+      "configurationAnchor": "video_overlay",
+      "displayChannelName": "danielzagidullin",
+      "features": {
+        "isBitsEnabled": false,
+        "isChatEnabled": false,
+        "isSubscriptionStatusAvailable": false
+      },
+      "frameSize": {
+        "width": 375,
+        "height": 822
+      },
+      "id": "1",
+      "isPopout": false,
+      "label": "Mobile",
+      "linked": false,
+      "linkedUserId": "",
+      "orientation": "Landscape",
+      "type": "mobile",
+      "viewerType": "Logged-In Viewer"
+    }
+  ],
+  "manifest": {
+    "anchor": "video_overlay",
+    "assetUrls": [],
+    "authorName": "",
+    "bitsEnabled": false,
+    "canInstall": true,
+    "configUrl": "https://localhost:3000/config.html",
+    "configurationLocation": "none",
+    "description": "",
+    "eulaTosUrl": "",
+    "hasChatSupport": false,
+    "iconUrl": "",
+    "iconUrls": {},
+    "id": "qma4leeob7pupm5k3wfo81dtg9wv3f",
+    "installationCount": -42,
+    "liveConfigUrl": "",
+    "name": "Vital Game",
+    "panelHeight": 0,
+    "privacyPolicyUrl": "",
+    "requestIdentityLink": false,
+    "requiredBroadcasterAbilities": [],
+    "screenshotUrls": [],
+    "sku": "",
+    "state": "Testing",
+    "subscriptionsSupportLevel": "none",
+    "summary": "",
+    "supportEmail": "",
+    "vendorCode": "",
+    "version": "0.0.1",
+    "viewerSummary": "",
+    "viewerUrl": "",
+    "viewerUrls": {
+      "mobile": "https://localhost:3000/video_overlay.html",
+      "videoOverlay": "https://localhost:3000/video_overlay.html"
+    },
+    "views": {
+      "mobile": {
+        "viewerUrl": "https://localhost:3000/video_overlay.html"
+      },
+      "videoOverlay": {
+        "viewerUrl": "https://localhost:3000/video_overlay.html",
+        "canLinkExternalContent": false
+      },
+      "config": {
+        "viewerUrl": "https://localhost:3000/config.html",
+        "canLinkExternalContent": false
+      }
+    },
+    "whitelistedConfigUrls": [],
+    "whitelistedPanelUrls": []
+  },
+  "frontendCommand": "npm run dev",
+  "frontendFolderName": "public",
+  "name": "Vital Game",
+  "usingRandomFrontendHostingPort": false,
+  "version": 3
+}

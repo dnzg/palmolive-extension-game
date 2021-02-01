@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="Cache-Control" content="no-cache" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta charset="utf-8">
-
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
-    <link rel="manifest" href="assets/favicon/site.webmanifest">
-    <link rel="mask-icon" href="assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
-    <link rel="shortcut icon" href="assets/favicon/favicon.ico">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="msapplication-config" content="assets/favicon/browserconfig.xml">
-    <meta name="theme-color" content="#ffffff">
-
-    <script src="js/p5.min.js"></script>
-    <script src="js/p5.sound.min.js"></script>
-  </head>
-  <body ontouchstart="countTouches(event)" ontouchend="countTouches(event)">
-    <img src="assets/cardh.png" style="display: none;">
+<head>
+  <meta http-equiv="Cache-Control" content="no-cache" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+  <link rel="manifest" href="assets/favicon/site.webmanifest">
+  <link rel="mask-icon" href="assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="assets/favicon/favicon.ico">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-config" content="assets/favicon/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+  <script src="js/p5.min.js"></script>
+  <script src="js/p5.sound.min.js"></script>
+</head>
+<body ontouchstart="countTouches(event)" ontouchend="countTouches(event)">
+  <div id="bodyGlobal">
+  <img src="assets/cardh.png" style="display: none;">
     <div id="blocker"></div>
 
     <div id="leaderboard">
@@ -28,8 +28,8 @@
         <img src="assets/back.png" onclick="leaderboard(false)" />
         <h2>leaderboard</h2>
       </div>
-      <div class="row">
-        <div class="line">
+      <div class="row" id="leadersRow">
+        <!-- <div class="line">
           <div class="prize"><img src="assets/fprize.png"></div>
           <div class="playerName">Player_1</div>
           <div class="pointScore">0</div>
@@ -53,7 +53,7 @@
           <div class="prize place">5.</div>
           <div class="playerName">Player_1</div>
           <div class="pointScore">0</div>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -63,23 +63,23 @@
     </div>
 
     <header>
-      <img src="assets/newgame.png" style="height: 100%;cursor: pointer;margin-right: 10px;"  onclick="Reset(GlobalBulletVar)"/>
-      <img src="assets/leaderboard.png" style="height: 100%;cursor: pointer;margin-right: 20px;" onclick="leaderboard(true)" />
+      <img class="nomobile" src="assets/newgame.png" style="height: 100%;cursor: pointer;margin-right: 10px;"  onclick="Reset(GlobalBulletVar)"/>
+      <img class="nomobile" src="assets/leaderboard.png" style="height: 100%;cursor: pointer;margin-right: 20px;" onclick="leaderboard(true)" />
       Мой рекорд: <span id="scoreHead">0</span>
-      <img src="assets/soundoff.png" style="height: 100%; cursor: pointer;margin-left: auto;"/>
+      <img onclick="sound()" id="ismuted" src="assets/soundoff.png" style="height: 100%; cursor: pointer;margin-left: auto;"/>
     </header>
 
     <div id="timeoutscreen">
       <div id="timeout">
-        <span style="margin: auto;">0</span>
+        <span style="margin: 0 auto auto auto;">0</span>
         <div id="controls">
           <div class="eduIcon">
             Вверх
-            <img src="assets/mouse.gif"/ id="upIco">
+            <img id="upIco">
           </div>
           <div class="eduIcon">
             Стрелять
-            <img src="assets/spacebar.gif"/ id="shootIco">
+            <img id="shootIco">
           </div>
         </div>
       </div>
@@ -139,12 +139,19 @@
       <img src="assets/start.png" id="startButton" onclick="detaction(2)" />
     </div>
 
+    <div id="loginScreen">
+      <img src="assets/vitbal2.png" id="vitbal2" />
+      <a href="https://www.twitch.tv/login" target="_blank"><img src="assets/login.png" id="startButton2" /></a>
+    </div>
+  </div>  
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>	
 		<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
 		<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-database.js"></script>
 		<script src="js/fb.js"></script>
     <script src="js/jq.js"></script>
+    <script src="js/jquery-ui.js"></script>
     <script src="js/if.js"></script>
     <script src="js/sketch.js"></script>
-  </body>
+</body>
 </html>

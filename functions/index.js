@@ -35,6 +35,7 @@ exports.leaderUpdate = functions.database.ref(ref)
         }
         return 0;
       });
-      db.ref("leaderboard").set(rating.slice(0, 10));
+      const rate = rating.slice(0, 10);
+      db.ref("leaderboard").set(rate);
     },
     );

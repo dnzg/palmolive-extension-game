@@ -15,6 +15,38 @@ body {
   padding: 0;
   width: 100vw;
   height: 100vh;
+  display: flex;
+}
+
+.mobile_bodyGlobal {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+#bodyGlobal {
+  width: 60%;
+  height: 55%;
+  margin: auto 24px auto auto;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 8px 12px rgba($color: #000000, $alpha: 0.2);
+
+  &::after {
+    background-image: url(../assets/handle.png);
+    background-size: cover;
+    content: "";
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    z-index: 3;
+    bottom: 2px;
+    left: 2px;
+    opacity: 0.5;
+  }
 }
 
 #blocker {
@@ -33,13 +65,22 @@ body {
 canvas {
   display: block;
 }
-#startScreen {
+#startScreen,
+#loginScreen {
   background: #006747;
   box-shadow: 0px 20px 0px 0px #a9c23f inset, 0 -20px 0 0px #a9c23f inset;
   /* background: #000; */
   display: none;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
+}
+#loginScreen {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 #blast {
   background-image: url(../assets/sword.png);
@@ -60,9 +101,15 @@ header {
   border-bottom: 2px solid #fff;
   display: flex;
   align-items: center;
+  font-size: 0.7em;
   display: none;
-
   backdrop-filter: blur(4px);
+
+  .nomobile {
+    @media screen and (max-width: 400px) {
+      display: none;
+    }
+  }
 }
 #scoreHead {
   color: #a9c23f;
@@ -76,12 +123,13 @@ header {
 }
 #scoreLeft h2 {
   color: #a9c23f;
-  font-size: 2.25em;
+  font-size: 2em;
   margin-bottom: 0;
 }
 #scoreLeft h3 {
-  font-size: 1.25em;
+  font-size: 1em;
   margin-top: 0.75em;
+  margin-bottom: 0;
 }
 #timeoutscreen {
   display: none;
@@ -90,7 +138,7 @@ header {
   background-size: cover;
   background-position: left;
   position: absolute;
-  z-index: 9999;
+  z-index: 2;
   top: 0;
   bottom: 0;
   left: 0;
@@ -101,7 +149,7 @@ header {
 #timeout {
   align-items: center;
   flex-direction: column;
-  font-size: 4em;
+  font-size: 2.5em;
   text-align: center;
   color: #fff;
 
@@ -117,6 +165,11 @@ header {
   height: 50%;
   background-size: contain;
   color: #fff;
+
+  @media screen and (max-width: 400px) {
+    width: 90%;
+    font-size: 1.5em;
+  }
 }
 #controls {
   width: 100%;
@@ -125,10 +178,11 @@ header {
   justify-content: space-between;
 
   .eduIcon {
-    width: 33.33%;
+    width: 45%;
     font-size: 0.5em;
     display: flex;
     flex-direction: column;
+    text-align: center;
 
     img {
       height: 64px;
@@ -138,22 +192,31 @@ header {
     }
   }
 }
-#vitbal {
+#vitbal,
+#vitbal2 {
   position: absolute;
   width: 80%;
   top: 15%;
   margin: auto;
   left: 0;
   right: 0;
+  @media screen and (max-width: 400px) {
+    width: 90%;
+    top: 25%;
+  }
 }
-#startButton {
+#startButton,
+#startButton2 {
   margin: auto;
   position: absolute;
-  width: 20%;
+  width: 25%;
   bottom: 20%;
   left: 0;
   right: 0;
   cursor: pointer;
+  @media screen and (max-width: 400px) {
+    width: 50%;
+  }
 }
 #startButton:hover {
   margin: auto auto -4px;
@@ -161,7 +224,7 @@ header {
 }
 #gameoverscreen {
   display: none;
-  z-index: 9998;
+  z-index: 1;
   box-sizing: border-box;
   position: absolute;
   top: 0;
@@ -193,19 +256,21 @@ header {
 
   h2 {
     color: #fff;
-    font-size: 1.25em;
+    font-size: 1em;
   }
 
   h3 {
     color: #a9c23f;
-    font-size: 2.25em;
+    font-size: 2em;
+    margin-bottom: 12px;
+    margin-top: 0;
   }
 
   img {
     width: 40%;
 
     &:last-child {
-      margin-top: 16px;
+      margin-top: 8px;
     }
 
     &:hover {
@@ -214,7 +279,7 @@ header {
 
       &:last-child {
         margin-bottom: -4px;
-        margin-top: 20px;
+        margin-top: 12px;
       }
     }
   }
@@ -230,20 +295,28 @@ header {
   width: 100%;
   height: 100%;
   background-color: #a9c23f;
-  z-index: 9999;
+  z-index: 2;
   color: #fff;
   display: none;
+  overflow-y: scroll;
 
   .header {
     width: 90%;
-    height: 50px;
+    height: 32px;
     display: flex;
     align-items: center;
     margin: 20px auto 0;
     position: relative;
+    @media screen and (max-width: 400px) {
+      height: 22px;
+    }
 
     h2 {
       margin: 0 auto;
+      @media screen and (max-width: 400px) {
+        font-size: 0.6em;
+        margin: 0 0 0 auto;
+      }
     }
 
     img {
@@ -258,7 +331,7 @@ header {
   }
 
   .row {
-    width: 50%;
+    width: 80%;
     margin: 32px auto 16px;
 
     .line {
@@ -298,7 +371,7 @@ header {
 
 #chooseship {
   position: absolute;
-  z-index: 9999;
+  z-index: 1;
   background-image: url(../assets/bg.jpg);
   background-size: cover;
   background-position: left;
@@ -320,7 +393,7 @@ header {
     height: 60%;
 
     h2 {
-      font-size: 2.5em;
+      font-size: 1.5em;
       @media screen and (max-width: 400px) {
         font-size: 1.5em;
       }
@@ -362,7 +435,7 @@ header {
 
 #spacedetails {
   position: absolute;
-  z-index: 9999;
+  z-index: 1;
   background-image: url(../assets/bg.jpg);
   background-size: cover;
   background-position: left;
@@ -393,7 +466,7 @@ header {
       background-repeat: no-repeat;
       display: flex;
       align-items: center;
-      width: 40%;
+      width: 30%;
 
       img {
         margin: auto;
@@ -405,10 +478,14 @@ header {
     }
 
     .desc {
-      font-size: 1.75em;
+      font-size: 0.85em;
+      width: 70%;
+      @media screen and (max-width: 300px) {
+        font-size: 0.65em;
+      }
 
       span {
-        margin-bottom: 32px;
+        margin-bottom: 12px;
         display: inline-block;
       }
 
@@ -430,11 +507,14 @@ header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    width: 80%;
-    height: 64px;
-    margin: 64px auto 0;
+    width: 60%;
+    height: 32px;
+    margin: 24px auto 0;
     @media screen and (max-width: 760px) {
       width: 100%;
+    }
+    @media screen and (max-width: 300px) {
+      height: 22px;
     }
 
     img {
