@@ -3,7 +3,7 @@ let H = $("#bodyGlobal").height();
 
 let MAX_ENEMY = 5;
 const MAX_LIFE = 3;
-const TimeoutBeforeGame = 1;
+const TimeoutBeforeGame = 3;
 let MOBILE_TYPE = false;
 let BIRD_VEL = parseInt((H/70).toFixed());
 // let BIRD_VEL = (H/70).toFixed();
