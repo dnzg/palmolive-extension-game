@@ -5,7 +5,8 @@ let MAX_ENEMY = 5;
 const MAX_LIFE = 3;
 const TimeoutBeforeGame = 1;
 let MOBILE_TYPE = false;
-let BIRD_VEL = (H/70).toFixed();
+let BIRD_VEL = parseInt((H/70).toFixed());
+// let BIRD_VEL = (H/70).toFixed();
 $('#bodyGlobal').dblclick(function() {
     // console.log('DOUBLE_CLICKED');
   });
@@ -29,7 +30,6 @@ if (MOBILE_TYPE) {
     $('#upIco').attr('src','assets/tap.gif');
     $('#shootIco').attr('src','assets/sword.gif');
     $('#blast').show();
-    HEADER_LIMIT=W;
 } else {
     
     $('#blast').hide();
@@ -55,7 +55,9 @@ $(window).on('load resize', function() {
         $('header').height(W/20);
         $('#gameoverInside').height(0.89*W).width(W/2);
     }
-    BIRD_VEL = parseInt((H/50).toFixed());
+
+    BIRD_VEL = parseInt((H/70).toFixed());
+    if(MOBILE_TYPE) {BIRD_VEL=8; MAX_ENEMY=4;HEADER_LIMIT=W/2;};
     // console.log(H,W, BIRD_VEL);
     // setup();
 });
