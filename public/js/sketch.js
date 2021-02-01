@@ -666,7 +666,7 @@ class Bonus {
 		this.y = random(HEADER_LIMIT, H-32);
 		this.speed = enemyspeed();
 		this.type = type;
-		this.radius = H/12;
+		this.radius = H/5;
 	}
 
 	move(){
@@ -674,7 +674,7 @@ class Bonus {
 	}
 
 	show() {
-		image(bonusImg, this.x - this.radius, this.y - this.radius, 0.436*H/12, H/12);
+		image(bonusImg, this.x - this.radius, this.y - this.radius, 0.436*H/5, H/5);
 	}
 
 	effect(player) {
