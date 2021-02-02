@@ -284,7 +284,7 @@ function GlobalBullet(x, y) {
     } else if(GlobalBulletVar==3) {
         var bul = new Bullet1(x, y);
         QUAN_BLASTS=1;
-        COOLDOWNGUN=1;
+        COOLDOWNGUN=3;
         GunDamage=2;
     }
     return bul;
@@ -480,9 +480,11 @@ function bulletMove() {
                         enemies[j].image.height = H/7;
                         console.log(enemies[j]);
                         setTimeout(() => {
-                            enemies[j].life -=2;
-                            explosions.push(createVector(enemies[j].x,enemies[j].y, frameCount));
-                            enemies[j].reborn();
+                            if(enemies[j]!==undefined){
+                                enemies[j].life -=2;
+                                explosions.push(createVector(enemies[j].x,enemies[j].y, frameCount));
+                                enemies[j].reborn();
+                            }
                         }, 400);
                     } else if(guntype==1 && enemies[j].type==2) {
                         blastsound.play();
@@ -509,7 +511,7 @@ function bulletMove() {
 	}
 }
 function intersectWith(object1, object2) {
-    if(object1.state === 3) {
+    if(object1.state === 3 || object1.state === 1) {
         object1.x1 = object1.x,
         object1.x2 = object1.width + object1.x,
         object1.y1 = object1.y,
@@ -572,8 +574,11 @@ class Bullet1 {
 	constructor(initX, initY) {
 		this.x = initX;
 		this.y = initY - 10;
-		this.speed = 20;
-		this.radius = 0;
+		this.speed = 1;
+		this.radius = 50;
+        this.width = 32+W/2;
+        this.height = 40;
+        this.state = 1;
 	}
 
 	show() {
@@ -582,7 +587,8 @@ class Bullet1 {
         image(laserGreenExpimg, this.x-18+W/2, this.y-18, 40, 40);
 	}
 	move() {
-        this.x += this.speed;
+        this.y = bird.pos.y-10;
+        // this.x += this.speed/10;
 	}
 }
 
