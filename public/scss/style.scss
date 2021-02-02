@@ -52,6 +52,13 @@ body {
   }
 }
 
+#hide {
+  position: absolute;
+  z-index: 4;
+  bottom: 2px;
+  right: 2px;
+}
+
 #blocker {
   z-index: 99999999;
   position: absolute;

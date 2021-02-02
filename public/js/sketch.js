@@ -6,11 +6,7 @@ const MAX_LIFE = 3;
 const TimeoutBeforeGame = 3;
 let MOBILE_TYPE = false;
 let BIRD_VEL = parseInt((H/70).toFixed());
-// let BIRD_VEL = (H/70).toFixed();
-$('#bodyGlobal').dblclick(function() {
-    // console.log('DOUBLE_CLICKED');
-  });
-let COOLDOWNGUN, QUAN_BLASTS, lockEnemies, enemies = [], bullets = [], bonus = [], explosions = [], explosionAnim = [], bulletImg, enemyImg1b, enemyImg2b, state = 0, img1, img2, img3, img4, back, flap, met1, met2, GunDamage, blastimg, laserimg, laserGreenimg, laserGreenExpimg, laserGreenCirimg, laserVioletExpimg, laserVioletCirimg, laserVioletimg, gameover, blast_sound, laser_sound, freeze_sound, boom_sound, GlobalBulletVar, bonusImg, bonus1, bonus2, bonus3, bonus4, redBlasts=0, redBlastBlock=false, guntype;
+let COOLDOWNGUN, QUAN_BLASTS, lockEnemies, enemies = [], bullets = [], bonus = [], explosions = [], explosionAnim = [], bulletImg, enemyImg1b, enemyImg2b, state = 0, img1, img2, img3, img4, back, flap, met1, met2, GunDamage, blastimg, laserimg, laserGreenimg, laserGreenExpimg, laserGreenCirimg, laserVioletExpimg, laserVioletCirimg, laserVioletimg, gameover, blast_sound, laser_sound, freeze_sound, boom_sound, GlobalBulletVar, bonusImg, bonus1, bonus2, bonus3, bonus4, redBlasts=0, redBlastBlock=false, guntype, shakingScreen=false, bigboom = [];
 var pipe1, pipe2, pipe3, bird, button, isMenu = 1, score = 0, LastScore, x1 = 0, x2, scrollSpeed = 0.65;
 
 let url = window.location.search.slice(1).split('&');
@@ -18,13 +14,11 @@ let url_object = {};
 for (let u = 0; u < url.length; u++) {
     url_object[url[u].split('=')[0]] = url[u].split('=')[1];
 }
-// console.log(url_object.platform);
 if(url_object.platform=='mobile'){
     MOBILE_TYPE=true;
 }
 let HEADER_LIMIT=W/6;
 if (MOBILE_TYPE) {
-    // $('#bodyGlobal').resizable('disable');
     $('#bodyGlobal').addClass('mobile_bodyGlobal');
     
     $('#upIco').attr('src','assets/tap.gif');
@@ -58,8 +52,6 @@ $(window).on('load resize', function() {
 
     BIRD_VEL = parseInt((H/70).toFixed());
     if(MOBILE_TYPE) {BIRD_VEL=8; MAX_ENEMY=4;HEADER_LIMIT=W/2;};
-    // console.log(H,W, BIRD_VEL);
-    // setup();
 });
 
 function preload() {
@@ -78,6 +70,11 @@ function preload() {
     met1 = loadImage('assets/m1.png');
     met2 = loadImage('assets/m2.png');
     blastimg = loadImage('assets/blast.png');
+
+    for (let i = 1; i < 6; i++) {
+        bigboom.push(loadImage('assets/boom'+i+'.png'));
+    }
+
     laserimg = loadImage('assets/laser.png');
     laserGreenimg = loadImage('assets/laser_green.png');
     laserGreenExpimg = loadImage('assets/laser_green_exp.png');
@@ -124,6 +121,7 @@ function gameoverscreen() {
     if(guntype==3) {
         redBlastBlock=false;
         redBlasts=0;
+        console.log(redBlasts)
     }
 
     if(!isMuted) gameover.play();
@@ -182,7 +180,6 @@ function leaderboard(state) {
 
 function Reset(num) {
     GlobalBulletVar = num;
-    // console.log(num);
     if (num==0) {
         birdImg = img1;
 
@@ -218,6 +215,7 @@ function GlobalBullet(x, y) {
         var d = 0;
         
         var destroyEverything = setInterval(() => {
+            shakingScreen=true;
             for (let o = 0; o < enemies.length; o++) {
                 explosions.push(createVector(enemies[o].x,enemies[o].y, frameCount));   
                 enemies[o].reborn();
@@ -230,6 +228,7 @@ function GlobalBullet(x, y) {
             };
         }, 1000);
         setTimeout(() => {
+            shakingScreen=false;
             lockEnemies=false;
         }, 5000);
 
@@ -248,7 +247,6 @@ function GlobalBullet(x, y) {
         COOLDOWNGUN=0.25;
         GunDamage=1;
         redBlasts++;
-        // console.log(redBlasts, bullets);
     } else if(GlobalBulletVar==3) {
         var bul = new Bullet1(x, y);
         QUAN_BLASTS=1;
@@ -277,19 +275,13 @@ function setup() {
     startWindow(true);
 
     x2 = 10*H;
-
-	// spaceShip = new SpaceShip(MAX_LIFE);
     bird = new Bird();
 }
 
 function draw() {
-    // if(mouseIsPressed) {
-    //     setInterval(() => {
-    //         mousePressed();
-    //     }, 200);
-    // }
-    // if (keyIsPressed && key === ' ') gun();
     if (!isMenu) {
+        if(shakingScreen) translate(random(-5,5),random(-5,5));
+
         LastScore = score;
         background('#000');
         image(back, x1, 0, 10*H, H);
@@ -316,7 +308,7 @@ function draw() {
 		for (enemy of enemies) {
 			enemy.move();
 			enemy.show();
-		}
+        }        
 
 		for (let i = 0; i < explosions.length; i++) {
 			if (explosions[i].z + 6 > frameCount) {
@@ -337,7 +329,6 @@ function draw() {
                 }
             }
         }
-        
 
 		// Bonus
 		if (random(1,300) <= 2 && bonus.length < 1) {
@@ -353,14 +344,14 @@ function draw() {
             }
             if(bonus[i]!==undefined){
                 if (bonus[i].x < 0) {
-                    // bonus.splice(1, i);
                     bonus.splice(i, 1);
                 }
             }
 		}
 
 		// Bullet's move
-		bulletMove();	
+        bulletMove();	
+        
     }
 }
 
@@ -451,7 +442,6 @@ function bulletMove() {
                     if (enemies[j].life == 0) {
                         explosions.push(createVector(enemies[j].x,enemies[j].y, frameCount));
                         enemies[j].reborn();
-                        // spaceShip.score += enemies[j].point;
                     }
                 }
 				
@@ -467,8 +457,6 @@ function bulletMove() {
 }
 function intersectWith(object1, object2) {
     if(object1.state === 3) {
-
-        // var objs = [
         object1.x1 = object1.x,
         object1.x2 = object1.width + object1.x,
         object1.y1 = object1.y,
@@ -477,7 +465,6 @@ function intersectWith(object1, object2) {
         object2.x2 = object2.image.width + object2.x,
         object2.y1 = object2.y,
         object2.y2 = object2.image.height + object2.y
-        // ];
 
         if(object1.x1 < object2.x2
             && object1.x2 > object2.x1
@@ -509,7 +496,6 @@ function intersectWithBird(object1, object2) {
 }
 
 function explosion(x,y, startFrame) {
-    // console.log((frameCount - startFrame) % 6);
     image(explosionAnim[(frameCount - startFrame) % 6], x, y, H/12, H/12);
 }
 class Bullet {
@@ -655,7 +641,6 @@ class Enemy{
 
 	show() {
         image(this.image, this.x-15, this.y-15);
-        // filter(BLUR, 10);
 	}
 }
 
@@ -708,9 +693,7 @@ class Bird {
     }
     
     move() {
-        // for (let i = 0; i < 3000; i++) {
-            this.x -= this.speed;
-        // }
+        this.x -= this.speed;
     }
 
 }
