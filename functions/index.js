@@ -44,8 +44,6 @@ exports.authTwitch = functions.https.onRequest(async (req, res) => {
     }
 
     const extAuthHeader = req.headers["x-extension-jwt"];
-    const uid = req.headers["userid"];
-    const clientId = req.headers["clientid"];
 
     if (!extAuthHeader) throw new Error("Authentication token not presented");
 
@@ -70,16 +68,6 @@ exports.authTwitch = functions.https.onRequest(async (req, res) => {
       throw new Error("Failed to generate firebase custom auth token");
     }
 
-    const kraken = await axios.get("https://api.twitch.tv/kraken/users/"+uid, {
-      headers: {
-        "Accept": "application/vnd.twitchtv.v5+json",
-        "Client-ID": clientId,
-      },
-    }).then(function(response) {
-      return response;
-    });
-    console.log(kraken);
-
     corsHeader(req, res, () => {
       res.status(200).json(customAuthToken);
     });
@@ -92,12 +80,25 @@ exports.authTwitch = functions.https.onRequest(async (req, res) => {
 });
 
 const ref = "users/{userId}";
-exports.userUpdate = functions.database.ref(ref)
-    .onWrite(async (change, context) => {
-      console.log(change.after.val());
-      db.ref(change.ref).set([change.after.val(), 1]);
-    },
-    );
+// exports.userUpdate = functions.database.ref(ref)
+//     .onWrite(async (change, context) => {
+//       console.log(change.after.val());
+//       const kraken = await axios.get("https://api.twitch.tv/kraken/users/"+change.after.val(), {
+//         headers: {
+//           "Accept": "application/vnd.twitchtv.v5+json",
+//           "Client-ID": "qma4leeob7pupm5k3wfo81dtg9wv3f",
+//         },
+//       }).then(function(response) {
+//         return response;
+//       });
+//       console.log(kraken.data.name);
+//       const rootSnapshot = change.after.ref.parent.child(context.params.userId);
+//       rootSnapshot.set({
+//         "username": kraken.data.name,
+//         "score": change.after.val(),
+//       });
+//     },
+//     );
 
 exports.leaderUpdate = functions.database.ref(ref)
     .onWrite(async (change, context) => {
