@@ -70,6 +70,16 @@ function ratingWrite(num) {
 //     return check;
 //   };
 
+function hideBody(state) {
+    if(state) {
+        $('#bodyGlobal').hide();
+        $('#showGlobal').show();
+    } else {
+        $('#bodyGlobal').show();
+        $('#showGlobal').hide();
+    }
+}
+
 function sound(e) {
     if(isMuted) {
         isMuted=false;

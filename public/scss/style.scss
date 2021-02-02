@@ -29,6 +29,23 @@ body {
   box-shadow: none !important;
 }
 
+#showGlobal {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  width: 10%;
+  height: 32px;
+  box-sizing: border-box;
+  bottom: 0;
+  top: 0;
+  right: 24px;
+  display: none;
+  z-index: 5;
+  margin: auto;
+  text-align: right;
+  color: #a9c23f;
+}
+
 #bodyGlobal {
   width: 60%;
   height: 55%;
@@ -55,8 +72,11 @@ body {
 #hide {
   position: absolute;
   z-index: 4;
-  bottom: 2px;
-  right: 2px;
+  bottom: 6px;
+  right: 6px;
+  font-size: 0.5em;
+  cursor: pointer;
+  color: #006747;
 }
 
 #blocker {

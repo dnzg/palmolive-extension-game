@@ -3,10 +3,10 @@ let H = $("#bodyGlobal").height();
 
 let MAX_ENEMY = 5;
 const MAX_LIFE = 3;
-const TimeoutBeforeGame = 3;
+const TimeoutBeforeGame = 1;
 let MOBILE_TYPE = false;
 let BIRD_VEL = parseInt((H/70).toFixed());
-let COOLDOWNGUN, QUAN_BLASTS, lockEnemies, enemies = [], bullets = [], bonus = [], explosions = [], explosionAnim = [], bulletImg, enemyImg1b, enemyImg2b, state = 0, img1, img2, img3, img4, back, flap, met1, met2, GunDamage, blastimg, laserimg, laserGreenimg, laserGreenExpimg, laserGreenCirimg, laserVioletExpimg, laserVioletCirimg, laserVioletimg, gameover, blast_sound, laser_sound, freeze_sound, boom_sound, GlobalBulletVar, bonusImg, bonus1, bonus2, bonus3, bonus4, redBlasts=0, redBlastBlock=false, guntype, shakingScreen=false, bigboom = [];
+let COOLDOWNGUN, QUAN_BLASTS, lockEnemies, enemies = [], bullets = [], bonus = [], explosions = [], explosionAnim = [], bulletImg, enemyImg1b, enemyImg2b, state = 0, img1, img2, img3, img4, back, flap, met1, met2, GunDamage, blastimg, laserimg, laserGreenimg, laserGreenExpimg, laserGreenCirimg, laserVioletExpimg, laserVioletCirimg, laserVioletimg, gameover, blast_sound, laser_sound, freeze_sound, boom_sound, GlobalBulletVar, bonusImg, bonus1, bonus2, bonus3, bonus4, redBlasts=0, redBlastBlock=false, guntype, shakingScreen=false, bigboom = [], boom = [], bigboomGlobal=false, bi = 0;
 var pipe1, pipe2, pipe3, bird, button, isMenu = 1, score = 0, LastScore, x1 = 0, x2, scrollSpeed = 0.65;
 
 let url = window.location.search.slice(1).split('&');
@@ -71,7 +71,7 @@ function preload() {
     met2 = loadImage('assets/m2.png');
     blastimg = loadImage('assets/blast.png');
 
-    for (let i = 1; i < 6; i++) {
+    for (let i = 1; i < 8; i++) {
         bigboom.push(loadImage('assets/boom'+i+'.png'));
     }
 
@@ -205,7 +205,12 @@ function Reset(num) {
     }
     timeoutscreen();
 }
-
+function boomMove() {
+    for (let b = 0; b < boom.length; b++) {
+        boom[b].move();
+        boom[b].show();
+    }
+}
 function GlobalBullet(x, y) {
     if(GlobalBulletVar==0) {
         var bul = new Bullet(x, y);
@@ -213,7 +218,21 @@ function GlobalBullet(x, y) {
         COOLDOWNGUN=8;
         GunDamage=2;
         var d = 0;
-        
+        bigboomGlobal=true;
+
+        var b = 0;
+        var boominterval = setInterval(() => {
+            if(b == 7) { boom.length=0; clearInterval(boominterval); }
+            else {
+                bullets.length=0;
+                boom.length=0;
+                boom.push(new Paraboom(b, b*W/5));
+            }
+            console.log(boom);
+            b++;
+        }, 450);
+
+        bi = 0;
         var destroyEverything = setInterval(() => {
             shakingScreen=true;
             for (let o = 0; o < enemies.length; o++) {
@@ -228,6 +247,7 @@ function GlobalBullet(x, y) {
             };
         }, 1000);
         setTimeout(() => {
+            bigboomGlobal=false;
             shakingScreen=false;
             lockEnemies=false;
         }, 5000);
@@ -290,7 +310,6 @@ function draw() {
         x2 -= scrollSpeed;
         bird.show();
         bird.update();
-
       
         edges(bird.pos.y, canvas.height);
         Score(bird.pos.x, bird.pos.y);
@@ -308,7 +327,7 @@ function draw() {
 		for (enemy of enemies) {
 			enemy.move();
 			enemy.show();
-        }        
+        }
 
 		for (let i = 0; i < explosions.length; i++) {
 			if (explosions[i].z + 6 > frameCount) {
@@ -351,6 +370,8 @@ function draw() {
 
 		// Bullet's move
         bulletMove();	
+
+        boomMove();
         
     }
 }
@@ -665,6 +686,25 @@ class Bonus {
 	effect(player) {
         player.life +=1;
 	}
+}
+
+class Paraboom {
+    constructor(i, s) {
+        this.x = bird.pos.x+W/3;
+        this.y = (bird.pos.y)-(s/2);
+        this.speed = 2;
+        this.count = i;
+        this.img = bigboom[this.count];
+        this.size = s;
+    }
+
+    move() {
+        this.x -= this.speed;
+    }
+
+    show() {
+        image(this.img, this.x, this.y, this.size, this.size);
+    }
 }
 
 class Bird {

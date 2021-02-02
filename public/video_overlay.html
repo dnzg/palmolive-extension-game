@@ -19,8 +19,9 @@
   <script src="js/p5.sound.min.js"></script>
 </head>
 <body ontouchstart="countTouches(event)" ontouchend="countTouches(event)">
+  <div id="showGlobal" onclick="hideBody(false)">Начать игру</div>
   <div id="bodyGlobal">
-    <div id="hide" onclick="hideBody()">Скрыть</div>
+    <div id="hide" onclick="hideBody(true)">Скрыть</div>
   <img src="assets/cardh.png" style="display: none;">
     <div id="blocker"></div>
 
