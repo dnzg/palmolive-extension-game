@@ -1,4 +1,3 @@
-
 let W = $("#bodyGlobal").width();
 let H = $("#bodyGlobal").height();
 
@@ -7,7 +6,7 @@ const MAX_LIFE = 3;
 const TimeoutBeforeGame = 3;
 let MOBILE_TYPE = false;
 let BIRD_VEL = parseInt((H/70).toFixed());
-let COOLDOWNGUN, QUAN_BLASTS, lockEnemies, enemies = [], bullets = [], bonus = [], explosions = [], explosionAnim = [], bulletImg, enemyImg1b, enemyImg2b, state = 0, img1, img2, img3, img4, back, flap, met1, met2, GunDamage, blastimg, laserimg, laserGreenimg, laserGreenExpimg, laserGreenCirimg, laserVioletExpimg, laserVioletCirimg, laserVioletimg, gameover, blast_sound, laser_sound, freeze_sound, boom_sound, GlobalBulletVar, bonusImg, bonus1, bonus2, bonus3, bonus4, redBlasts=0, redBlastBlock=false, guntype, shakingScreen=false, bigboom = [], boom = [], bigboomGlobal=false, bi = 0, ints = [], scoreGlobal = 0, GRAVITY_N=0.45, BLASTS_COUNT, birdAsset, GunDamageRed, redBlastImb=false, TIMEOUT_BLUE=1000, TIMEOUT_FREEZE=3000, nothingSounds=true;
+let COOLDOWNGUN, QUAN_BLASTS, lockEnemies, enemies = [], bullets = [], bonus = [], explosions = [], explosionAnim = [], bulletImg, enemyImg1b, enemyImg2b, state = 0, img1, img2, img3, img4, back, flap, met1, met2, GunDamage, blastimg, laserimg, laserGreenimg, laserGreenExpimg, laserGreenCirimg, laserVioletExpimg, laserVioletCirimg, laserVioletimg, gameover, blast_sound, laser_sound, freeze_sound, boom_sound, GlobalBulletVar, bonusImg, bonus1, bonus2, bonus3, bonus4, redBlasts=0, redBlastBlock=false, guntype, shakingScreen=false, bigboom = [], boom = [], bigboomGlobal=false, bi = 0, ints = [], scoreGlobal = 0, GRAVITY_N=0.45, BLASTS_COUNT, birdAsset, GunDamageRed, redBlastImb=false, TIMEOUT_BLUE=1000, TIMEOUT_FREEZE=3000, nothingSounds=true, birdImg, birdActive, blastss;
 var pipe1, pipe2, pipe3, bird, button, isMenu = 1, score = 0, LastScore, x1 = 0, x2, scrollSpeed = 0.65;
 
 let url = window.location.search.slice(1).split('&');
@@ -80,12 +79,10 @@ function preload() {
     img4_a = loadImage('assets/ship4a.png');
 
     back = loadImage('assets/bg.jpg');
-    gameover = createAudio('sounds/gameover.mp3');
-    blast_sound = createAudio('sounds/blast.mp3');
-    laser_sound = createAudio('sounds/laser.mp3');
-    freeze_sound = createAudio('sounds/freez.mp3');
-    boom_sound = createAudio('sounds/boom.mp3');
-    timeoutsound = createAudio('sounds/timer2.mp3');
+    blast_sound = 'blast';
+    laser_sound = 'laser';
+    freeze_sound = 'freez';
+    boom_sound = 'boom';
     met1 = loadImage('assets/m1.png');
     met2 = loadImage('assets/m2.png');
     blastimg = loadImage('assets/blast.png');
@@ -152,11 +149,7 @@ function gameoverscreen() {
     }
 
     if(!isMuted && nothingSounds) {
-        gameover.play();
-        callbackAudio(false);
-        setTimeout(() => {
-            callbackAudio(true);
-        }, 1000*gameover.duration());
+        playAudio('gameover');
     }
     $('#blocker').show();
     setTimeout(() => {
@@ -175,24 +168,14 @@ function timeoutscreen() {
     $('#timeoutscreen').show();
     
     if(!isMuted && nothingSounds) {
-        timeoutsound.play();
-        callbackAudio(false);
-        
-        setTimeout(() => {
-            callbackAudio(true);
-        }, 1000*timeoutsound.duration());
+        playAudio('timer2');
     }
     i--;
     var refreshIntervalId = setInterval(() => {
         if (i > 0) {
             $('#timeout span').text(i);
             if(!isMuted && nothingSounds) {
-                timeoutsound.play();
-                callbackAudio(false);
-                
-                setTimeout(() => {
-                    callbackAudio(true);
-                }, 1000*timeoutsound.duration());
+                playAudio('timer2');
             }
             i--;
         } else {
@@ -231,7 +214,7 @@ function Reset(num) {
         birdImg = img1;
         birdActive = img1_a;
 
-        blastsound=boom_sound;
+        blastss=boom_sound;
         BLASTS_COUNT=3;
         bonusImg=bonus1;
         guntype = 0;
@@ -239,7 +222,7 @@ function Reset(num) {
         birdImg = img2;
         birdActive = img2_a;
 
-        blastsound=freeze_sound;
+        blastss=freeze_sound;
         BLASTS_COUNT=3;
         bonusImg=bonus2;
         guntype = 1;
@@ -247,7 +230,7 @@ function Reset(num) {
         birdImg = img3;
         birdActive = img3_a;
 
-        blastsound=laser_sound;
+        blastss=laser_sound;
         BLASTS_COUNT=10;
         bonusImg=bonus3;
         guntype = 3;
@@ -256,7 +239,7 @@ function Reset(num) {
         birdImg = img4;
         birdActive = img4_a;
 
-        blastsound=blast_sound;
+        blastss=blast_sound;
         BLASTS_COUNT=1;
         bonusImg=bonus4;
         
@@ -275,6 +258,8 @@ function GlobalBullet(x, y) {
     if(GlobalBulletVar==0) {
         var bul = new Bullet(x, y);
         QUAN_BLASTS=1;
+        enemyImg1b = enemyImg1b;
+        enemyImg2b = enemyImg2b;
         COOLDOWNGUN=15;
         GunDamage=2;
         var d = 0;
@@ -300,12 +285,7 @@ function GlobalBullet(x, y) {
                 explosions.push(createVector(enemies[o].x,enemies[o].y, frameCount));   
                 enemies[o].reborn();
                 if(!isMuted && nothingSounds) {
-                    blastsound.play();
-                    callbackAudio(false);
-        
-                    setTimeout(() => {
-                        callbackAudio(true);
-                    }, 1000*blastsound.duration());
+                    playAudio(blastss);
                 }
             }
             d++;
@@ -334,6 +314,8 @@ function GlobalBullet(x, y) {
         } 
         var bul = new Bullet2(x, y);
         QUAN_BLASTS=1;
+        enemyImg1b = enemyImg1b;
+        enemyImg2b = enemyImg2b;
         COOLDOWNGUN=0.25;
         GunDamage=GunDamageRed;
         redBlasts++;
@@ -341,6 +323,8 @@ function GlobalBullet(x, y) {
         BLASTS_COUNT -= 1;
         var bul = new Bullet1(x, y);
         QUAN_BLASTS=1;
+        enemyImg1b = enemyImg1b;
+        enemyImg2b = enemyImg2b;
         COOLDOWNGUN=3;
         GunDamage=2;
     }
@@ -520,21 +504,10 @@ function gun() {
                     if(guntype!==3 && guntype!==4) birdAsset = birdImg;
                 }, COOLDOWNGUN*1000);
                 
-                blastsound.volume(0.5);
                 if(!isMuted && nothingSounds && guntype !== 1) {
-                    blastsound.play();
-                    callbackAudio(false);
-        
-                    setTimeout(() => {
-                        callbackAudio(true);
-                    }, 1000*blastsound.duration());
+                    playAudio(blastss);
                 } else if(!isMuted && nothingSounds && guntype == 1) {
-                    blast_sound.play();
-                    callbackAudio(false);
-        
-                    setTimeout(() => {
-                        callbackAudio(true);
-                    }, 1000*blastsound.duration());
+                    playAudio(blastss);
                 };
             }
         }
@@ -561,12 +534,7 @@ function bulletMove() {
                     }
                     if(guntype==1 && enemies[j].type==1) {
                         if(!isMuted) {
-                            blastsound.play();
-                            // callbackAudio(false);
-        
-                            // setTimeout(() => {
-                            //     callbackAudio(true);
-                            // }, 1000*blastsound.duration());
+                            playAudio(blastss);
                         }
                         enemies[j].image = enemyImg1i;
                         enemies[j].image.width = H/7;
@@ -580,12 +548,7 @@ function bulletMove() {
                         }, 400);
                     } else if(guntype==1 && enemies[j].type==2) {
                         if(!isMuted && nothingSounds) {
-                            blastsound.play();
-                            callbackAudio(false);
-        
-                            setTimeout(() => {
-                                callbackAudio(true);
-                            }, 1000*blastsound.duration());
+                            playAudio(blastss);
                         }
                         enemies[j].image = enemyImg2i;
                         enemies[j].image.width = H/7;
@@ -687,17 +650,12 @@ class Bullet1 {
         image(laserGreenCirimg, this.x+36, this.y, 20, 20);
         image(laserGreenExpimg, this.x+10+W/2, this.y-10, 40, 40);
 
-        if(TIMEOUT_BLUE===8000) {
+        if(TIMEOUT_BLUE===5000) {
             for (let o = 0; o < enemies.length; o++) {
                 explosions.push(createVector(enemies[o].x,enemies[o].y, frameCount));   
                 enemies[o].reborn();
                 if(!isMuted && nothingSounds) {
-                    blastsound.play();
-                    callbackAudio(false);
-        
-                    setTimeout(() => {
-                        callbackAudio(true);
-                    }, 1000*blastsound.duration());
+                    playAudio(blastss);
                 }
             }
 
@@ -752,7 +710,7 @@ class Bullet3 {
         image(laserVioletCirimg, this.x+36, this.y-15, 2.25*50, 50);
         image(laserVioletExpimg, this.x+this.x+24+this.widthh*8, this.y, 1.26*25, 25);
 
-        if(TIMEOUT_FREEZE===9000) {
+        if(TIMEOUT_FREEZE===6000) {
             setTimeout(() => {
                 bullets.length=0;
                 TIMEOUT_FREEZE=3000;
@@ -860,8 +818,8 @@ class Bonus {
         if(guntype==0 && BLASTS_COUNT < 5) {
             BLASTS_COUNT += 1;
         } else if(guntype==1) {
-            TIMEOUT_FREEZE = 9000;
-            BLASTS_COUNT = 9;
+            TIMEOUT_FREEZE = 6000;
+            BLASTS_COUNT = 6;
         } else if(guntype==3) {
             GunDamageRed=2;
             birdAsset = birdActive;
@@ -871,10 +829,10 @@ class Bonus {
                 GunDamageRed=1;
                 redBlastBlock=false;
                 redBlastImb=false;
-            }, 8000);
+            }, 5000);
             //more power to blast
         } else if(guntype==4) {
-            TIMEOUT_BLUE = 8000;
+            TIMEOUT_BLUE = 5000;
             birdAsset = birdActive;
             
             setTimeout(() => {
@@ -943,3 +901,22 @@ class Bird {
     }
 
 }
+$("#showGlobal").on('click', function() { hideBody(false) });
+$("#hide").on('click', function() { hideBody(true) });
+$("#backLeader").on('click', function() { leaderboard(false) });
+$("#newGameButton").on('click', function() { Reset(GlobalBulletVar) });
+$("#leaderboardButton").on('click', function() { leaderboard(true) });
+$("#ismuted").on('click', function() { sound() });
+
+$("#bacButt").on('click', function() { detaction(0) });
+$("#chooButt").on('click', function() { detaction(1) });
+$("#startButton").on('click', function() { detaction(2) });
+
+$("#go1").on('click', function() { Reset(GlobalBulletVar) });
+$("#go2").on('click', function() { leaderboard(true) });
+$("#go3").on('click', function() { startWindow(true) });
+
+
+$('.cardship').on('click', function() {
+    chooseShip(parseInt($(this).data('num')));
+});

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <meta charset="utf-8">
   <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="css/jquery-ui.css">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
@@ -16,18 +16,17 @@
   <meta name="msapplication-config" content="assets/favicon/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
   <script src="js/p5.min.js"></script>
-  <script src="js/p5.sound.min.js"></script>
 </head>
 <body ontouchstart="countTouches(event)" ontouchend="countTouches(event)">
-  <div id="showGlobal" onclick="hideBody(false)">Начать игру</div>
+  <div id="showGlobal">Начать игру</div>
   <div id="bodyGlobal">
-    <div id="hide" onclick="hideBody(true)">Скрыть</div>
+    <div id="hide">Скрыть</div>
   <img src="assets/cardh.png" style="display: none;">
     <div id="blocker"></div>
 
     <div id="leaderboard">
       <div class="header">
-        <img src="assets/back.png" onclick="leaderboard(false)" />
+        <img src="assets/back.png" id="backLeader" />
         <h2>leaderboard</h2>
       </div>
       <div class="row" id="leadersRow">
@@ -40,10 +39,10 @@
     </div>
 
     <header>
-      <img class="nomobile" src="assets/newgame.png" style="height: 100%;cursor: pointer;margin-right: 10px;"  onclick="Reset(GlobalBulletVar)"/>
-      <img class="nomobile" src="assets/leaderboard.png" style="height: 100%;cursor: pointer;margin-right: 20px;" onclick="leaderboard(true)" />
+      <img class="nomobile" src="assets/newgame.png" style="height: 100%;cursor: pointer;margin-right: 10px;" id="newGameButton" />
+      <img class="nomobile" src="assets/leaderboard.png" style="height: 100%;cursor: pointer;margin-right: 20px;" id="leaderboardButton" />
       Мой рекорд: <span id="scoreHead">0</span>
-      <img onclick="sound()" id="ismuted" src="assets/soundoff.png" style="height: 100%; cursor: pointer;margin-left: auto;"/>
+      <img id="ismuted" src="assets/soundoff.png" style="height: 100%; cursor: pointer;margin-left: auto;"/>
     </header>
 
     <div id="timeoutscreen">
@@ -66,16 +65,16 @@
       <div class="container">
         <h2>Выбери корабль</h2>
         <div class="row">
-          <div class="card" onclick="chooseShip(1)">
+          <div class="card cardship" data-num="1">
             <img src="assets/ship2.png"/>
           </div>
-          <div class="card" onclick="chooseShip(0)">
+          <div class="card cardship" data-num="0">
             <img src="assets/ship1.png"/>
           </div>
-          <div class="card" onclick="chooseShip(2)">
+          <div class="card cardship" data-num="2">
             <img src="assets/ship3.png"/>
           </div>
-          <div class="card" onclick="chooseShip(3)">
+          <div class="card cardship" data-num="3">
             <img src="assets/ship4.png"/>
           </div>
         </div>
@@ -91,8 +90,8 @@
           <div class="desc" data-id="desc"></div>
         </div>
         <div class="rowDetails">
-          <img src="assets/backDetails.png"/ onclick="detaction(0)">
-          <img src="assets/chooseDetails.png"/ data-id="ship" onclick="detaction(1)">
+          <img src="assets/backDetails.png"/ id="bacButt">
+          <img src="assets/chooseDetails.png"/ data-id="ship" id="chooButt">
         </div>
       </div>
     </div>
@@ -102,9 +101,9 @@
         <div style="display: block;">
         <h2>Game Over</h2>
         <h3>0</h3>
-        <img src="assets/again.png" onclick="Reset(GlobalBulletVar)">
-        <img src="assets/leaderboard2.png" onclick="leaderboard(true)">
-        <img src="assets/end.png" onclick="startWindow(true)">
+        <img src="assets/again.png" id="go1">
+        <img src="assets/leaderboard2.png" id="go2">
+        <img src="assets/end.png" id="go3">
       </div>
       </div>  
     </div>
@@ -113,7 +112,7 @@
 
     <div id="startScreen">
       <img src="assets/vitbal.png" id="vitbal" />
-      <img src="assets/start.png" id="startButton" onclick="detaction(2)" />
+      <img src="assets/start.png" id="startButton" />
     </div>
 
     <div id="loginScreen">
@@ -123,7 +122,6 @@
   </div>  
     <script src="js/fb/twitch-ext.min.js"></script>
     <script src="js/fb/firebase-app.js"></script>
-    <script src="js/fb/firebase-analytics.js"></script>
     <script src="js/fb/firebase-database.js"></script>
     <script src="js/fb/firebase-auth.js"></script>
     <script src="js/fb/axios.min.js"></script>

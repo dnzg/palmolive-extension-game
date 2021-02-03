@@ -5,7 +5,7 @@
   "certificateExceptions": [],
   "extensionViews": [
     {
-      "channelId": "577038969",
+      "channelId": "265737932",
       "configurationAnchor": "video_overlay",
       "displayChannelName": "danielzagidullin",
       "features": {
@@ -14,38 +14,16 @@
         "isSubscriptionStatusAvailable": false
       },
       "frameSize": {
-        "width": 375,
-        "height": 822
+        "width": 1280,
+        "height": 720
       },
-      "id": "1",
-      "isPopout": false,
-      "label": "Mobile",
-      "linked": false,
-      "linkedUserId": "",
-      "orientation": "Portrait",
-      "type": "mobile",
-      "viewerType": "Logged-In Viewer"
-    },
-    {
-      "channelId": "577038969",
-      "configurationAnchor": "video_overlay",
-      "displayChannelName": "danielzagidullin",
-      "features": {
-        "isBitsEnabled": false,
-        "isChatEnabled": false,
-        "isSubscriptionStatusAvailable": false
-      },
-      "frameSize": {
-        "width": 360,
-        "height": 740
-      },
-      "id": "2",
+      "id": "3",
       "isPopout": false,
       "label": "",
       "linked": false,
       "linkedUserId": "",
-      "orientation": "Landscape",
-      "type": "mobile",
+      "orientation": "Portrait",
+      "type": "video_overlay",
       "viewerType": "Broadcaster"
     }
   ],

@@ -19,7 +19,6 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
-const analytics = firebase.analytics();
 const db = firebase.database();
 const auth = firebase.auth();
 let twitchAuth = "";
@@ -49,34 +48,41 @@ function logError(_, error, status) {
 }
 
 helper.onAuthorized(async function (auth) {
-  twitchAuth = auth;
-  twitchUsername = auth.userId;
-  clientId = auth.clientId;
-  console.log(auth);
-
-  const username = await axios.get("https://api.twitch.tv/kraken/users/"+twitchUsername.slice(1), {
-    headers: {
-      "Accept": "application/vnd.twitchtv.v5+json",
-      "Client-ID": clientId,
-    },
-  }).then(function(response) {
-    return response.data.name;
-  }).catch(error => console.log(error));
-  $('#playerName').text(username);
-
-  $.ajax({
-    type: "POST",
-    url: `${FUNCTIONS_API_URL}/authTwitch`,
-    headers: {
-      "x-extension-jwt": `Bearer ${auth.token}`
-    },
-    success: signIn,
-    error: logError,
+  window.Twitch.ext.actions.requestIdShare((e) => {
+    console.log(e);
   });
+    twitchAuth = auth;
+    twitchUsername = parseJwt(auth.token).user_id;
+    clientId = auth.clientId;
+    console.log(auth);
+    console.log(parseJwt(auth.token));
+    console.log(twitchUsername);
+
+    const username = await axios.get("https://api.twitch.tv/kraken/users/"+twitchUsername, {
+      headers: {
+        "Accept": "application/vnd.twitchtv.v5+json",
+        "Client-ID": clientId,
+      },
+    }).then(function(response) {
+      return response.data.name;
+    }).catch(error => console.log(error));
+    $('#playerName').text(username);
+
+    $.ajax({
+      type: "POST",
+      url: `${FUNCTIONS_API_URL}/authTwitch`,
+      headers: {
+        "x-extension-jwt": `Bearer ${auth.token}`
+      },
+      success: signIn,
+      error: logError,
+    });
 });
 
 helper.onContext(async function (context) {
   twitchMuted = context.isMuted;
+  isMuted = twitchMuted;
+  sound();
 });
 
 var token = "";
@@ -103,8 +109,10 @@ function onAuthorized() {
     db.ref("users/"+twitchUsername).on("value", (snapshot) => {
         console.log(snapshot.val());
         recordScore1 = snapshot.val();
-        recordScore = recordScore1.score;
-        $('#scoreHead').text(recordScore1.score);
+        if(recordScore1!==undefined && recordScore1!==null && recordScore1!=='') {
+          recordScore = recordScore1.score;
+          $('#scoreHead').text(recordScore1.score);
+        }
     });
     
     db.ref("leaderboard").on("value", (snapshot) => {
@@ -152,7 +160,7 @@ function onAuthorized() {
 
 async function dbWrite(userid, score) {
   console.log('started writing');
-  const username = await axios.get("https://api.twitch.tv/kraken/users/"+userid.slice(1), {
+  const username = await axios.get("https://api.twitch.tv/kraken/users/"+userid, {
     headers: {
       "Accept": "application/vnd.twitchtv.v5+json",
       "Client-ID": clientId,

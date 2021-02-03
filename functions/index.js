@@ -56,12 +56,12 @@ exports.authTwitch = functions.https.onRequest(async (req, res) => {
         TWITCH_EXTENSION_SECRET,
     );
     if (!payload) throw new Error("Failed to verify accessToken");
-    if (!payload.opaque_user_id) {
-      throw new Error("opaque_user_id in auth tokenz must be defined");
+    if (!payload.user_id) {
+      throw new Error("user_id in auth tokenz must be defined");
     }
 
     const customAuthToken = await auth.createCustomToken(
-        payload.opaque_user_id,
+        payload.user_id,
     );
     if (!customAuthToken) {
       throw new Error("Failed to generate firebase custom auth token");

@@ -1,3 +1,4 @@
+
 let recordScore=0;
 let isMuted = false;
 
@@ -63,3 +64,36 @@ function detaction(num){
             break;
     }
 }
+
+function playAudio(name) {
+    var id = makeid(3);
+    $("body").prepend(
+        '<audio id="audioElement_' + id + '" style="color:#fff">\
+        <source src="sounds/'+ name +'.mp3" type="audio/mpeg"></audio>'
+        );
+        $("#audioElement_" + id + "")[0].play();
+        $("#audioElement_" + id + "")[0].onended = function () {
+            $("#audioElement_" + id + "").remove();
+        };
+    }
+
+function makeid(length) {
+  var result = "";
+  var characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
+function parseJwt(token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+};
