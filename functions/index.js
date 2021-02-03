@@ -3,7 +3,6 @@ const admin = require("firebase-admin");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const corsHeader = cors({origin: true});
-const axios = require("axios");
 
 const TWITCH_EXTENSION_SECRET = Buffer.from(
     functions.config().production.twitch_extension_secret,
@@ -80,30 +79,11 @@ exports.authTwitch = functions.https.onRequest(async (req, res) => {
 });
 
 const ref = "users/{userId}";
-// exports.userUpdate = functions.database.ref(ref)
-//     .onWrite(async (change, context) => {
-//       console.log(change.after.val());
-//       const kraken = await axios.get("https://api.twitch.tv/kraken/users/"+change.after.val(), {
-//         headers: {
-//           "Accept": "application/vnd.twitchtv.v5+json",
-//           "Client-ID": "qma4leeob7pupm5k3wfo81dtg9wv3f",
-//         },
-//       }).then(function(response) {
-//         return response;
-//       });
-//       console.log(kraken.data.name);
-//       const rootSnapshot = change.after.ref.parent.child(context.params.userId);
-//       rootSnapshot.set({
-//         "username": kraken.data.name,
-//         "score": change.after.val(),
-//       });
-//     },
-//     );
-
 exports.leaderUpdate = functions.database.ref(ref)
     .onWrite(async (change, context) => {
       const users = (await db.ref("users").once("value")).val();
-      const rating = Object.keys(users).map((key) => [key, users[key]]);
+      const rating = Object.keys(users).map((key) =>
+        [users[key].username, users[key].score]);
       rating.sort(function(a, b) {
         if (a[1] > b[1]) {
           return -1;

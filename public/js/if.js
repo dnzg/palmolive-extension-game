@@ -2,11 +2,10 @@ let recordScore=0;
 let isMuted = false;
 
 function ratingWrite(num) {
-    console.log(num);
-    // if(num > recordScore) {
-    //     console.log('more');
+    console.log(num, recordScore);
+    if(parseInt(num) > parseInt(recordScore)) {
         dbWrite(twitchUsername, num);
-    // }
+    }
 }
 
 function hideBody(state) {

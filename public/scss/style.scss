@@ -161,6 +161,9 @@ header {
   font-size: 1em;
   margin-top: 0.75em;
   margin-bottom: 0;
+  @media screen and (max-height: 400px) {
+    font-size: 0.6em;
+  }
 }
 #timeoutscreen {
   display: none;

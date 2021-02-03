@@ -25,6 +25,28 @@
       "orientation": "Portrait",
       "type": "mobile",
       "viewerType": "Logged-In Viewer"
+    },
+    {
+      "channelId": "577038969",
+      "configurationAnchor": "video_overlay",
+      "displayChannelName": "danielzagidullin",
+      "features": {
+        "isBitsEnabled": false,
+        "isChatEnabled": false,
+        "isSubscriptionStatusAvailable": false
+      },
+      "frameSize": {
+        "width": 360,
+        "height": 740
+      },
+      "id": "2",
+      "isPopout": false,
+      "label": "",
+      "linked": false,
+      "linkedUserId": "",
+      "orientation": "Landscape",
+      "type": "mobile",
+      "viewerType": "Broadcaster"
     }
   ],
   "manifest": {

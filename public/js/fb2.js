@@ -53,6 +53,17 @@ helper.onAuthorized(async function (auth) {
   twitchUsername = auth.userId;
   clientId = auth.clientId;
   console.log(auth);
+
+  const username = await axios.get("https://api.twitch.tv/kraken/users/"+twitchUsername.slice(1), {
+    headers: {
+      "Accept": "application/vnd.twitchtv.v5+json",
+      "Client-ID": clientId,
+    },
+  }).then(function(response) {
+    return response.data.name;
+  }).catch(error => console.log(error));
+  $('#playerName').text(username);
+
   $.ajax({
     type: "POST",
     url: `${FUNCTIONS_API_URL}/authTwitch`,
@@ -91,8 +102,9 @@ $(function () {
 function onAuthorized() {
     db.ref("users/"+twitchUsername).on("value", (snapshot) => {
         console.log(snapshot.val());
-        recordScore = snapshot.val();
-        $('#scoreHead').text(recordScore.score);
+        recordScore1 = snapshot.val();
+        recordScore = recordScore1.score;
+        $('#scoreHead').text(recordScore1.score);
     });
     
     db.ref("leaderboard").on("value", (snapshot) => {
