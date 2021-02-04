@@ -21,6 +21,7 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const auth = firebase.auth();
+const defaultAnalytics = firebase.analytics();
 let twitchAuth = "";
 let twitchMuted = "";
 let isAuthed = false;
@@ -34,12 +35,16 @@ const signIn = async (authToken) => {
       throw new Error();
     }
     isAuthed = true;
-    console.log("SIGNED IN");
+    // console.log("SIGNED IN");
+    $('#bodyGlobal').show();
+    $('#loginScreen').hide();
+    $('#startScreen').show();
     twitch.onAuthorized();
   } catch (err) {
     isAuthed = false;
-    console.error(err);
-    console.log("SIGNIN FAILED");
+    // console.error(err);
+    $('#bodyGlobal').show();
+    // console.log("SIGNIN FAILED");
     signOut();
   }
 };
@@ -48,15 +53,15 @@ function logError(_, error, status) {
 }
 
 helper.onAuthorized(async function (auth) {
-  window.Twitch.ext.actions.requestIdShare((e) => {
-    console.log(e);
-  });
+  // window.Twitch.ext.actions.requestIdShare((e) => {
+  //   console.log(e);
+  // });
     twitchAuth = auth;
     twitchUsername = parseJwt(auth.token).user_id;
     clientId = auth.clientId;
-    console.log(auth);
-    console.log(parseJwt(auth.token));
-    console.log(twitchUsername);
+    // console.log(auth);
+    // console.log(parseJwt(auth.token));
+    // console.log(twitchUsername);
 
     const username = await axios.get("https://api.twitch.tv/kraken/users/"+twitchUsername, {
       headers: {
@@ -64,6 +69,7 @@ helper.onAuthorized(async function (auth) {
         "Client-ID": clientId,
       },
     }).then(function(response) {
+      // console.log(response)
       return response.data.name;
     }).catch(error => console.log(error));
     $('#playerName').text(username);
@@ -79,10 +85,10 @@ helper.onAuthorized(async function (auth) {
     });
 });
 
-helper.onContext(async function (context) {
+helper.onContext(function (context) {
   twitchMuted = context.isMuted;
-  isMuted = twitchMuted;
-  sound();
+  // isMuted = twitchMuted;
+  // sound();
 });
 
 var token = "";
@@ -92,22 +98,29 @@ let twitch = {
   onAuthorized,
 };
 
-$(function () {
-  $("#cycle-img").click(async function (event) {
-    event.preventDefault();
-    event.stopPropagation();
-    if (!isAuthed) return helper.rig.log("Not authorized");
-    await db
-      .ref(`users/${twitchAuth.userId}/clickCount`)
-      .transaction(function (clickCount) {
-        return clickCount + 1;
-      });
-  });
-});
+function countDigits(n) {
+  for(var i = 0; n > 1; i++) {
+     n /= 10;
+  }
+  return i;
+}
+
+function turnNum(num) {
+  var length = countDigits(num);
+  if(length >= 4 && length < 7) {
+    var newNum = num/1000;
+    return newNum.toFixed()+'K';
+  } else if (length >= 7) {
+    var newNum = num/1000000;
+    return newNum.toFixed()+'M';
+  } else {
+    return num;
+  }
+}
 
 function onAuthorized() {
     db.ref("users/"+twitchUsername).on("value", (snapshot) => {
-        console.log(snapshot.val());
+        // console.log(snapshot.val());
         recordScore1 = snapshot.val();
         if(recordScore1!==undefined && recordScore1!==null && recordScore1!=='') {
           recordScore = recordScore1.score;
@@ -116,57 +129,51 @@ function onAuthorized() {
     });
     
     db.ref("leaderboard").on("value", (snapshot) => {
-        console.log(snapshot.val());
+        // console.log(snapshot.val());
         var leaders = snapshot.val();
                 var linesarr=[];
                 if(leaders!==undefined && leaders!==null) {
                   for (let l = 0; l < leaders.length; l++) {
                       place=l+1;
+                      var pointScore = turnNum(leaders[l][1]);
                       if(place==1){
                           var line = '<div class="line">\
                           <div class="prize"><img src="assets/fprize.png"></div>\
                           <div class="playerName">'+leaders[l][0]+'</div>\
-                          <div class="pointScore">'+leaders[l][1]+'</div></div>';
+                          <div class="pointScore">'+pointScore+'</div></div>';
                       } else if (place==2){
                           var line = '<div class="line">\
                           <div class="prize"><img src="assets/sprize.png"></div>\
                           <div class="playerName">'+leaders[l][0]+'</div>\
-                          <div class="pointScore">'+leaders[l][1]+'</div></div>';
+                          <div class="pointScore">'+pointScore+'</div></div>';
                       } else if (place==3){
                           var line = '<div class="line">\
                           <div class="prize"><img src="assets/tprize.png"></div>\
                           <div class="playerName">'+leaders[l][0]+'</div>\
-                          <div class="pointScore">'+leaders[l][1]+'</div></div>';
+                          <div class="pointScore">'+pointScore+'</div></div>';
                       } else {
                           var line = '<div class="line">\
                           <div class="prize place">'+place+'.</div>\
                           <div class="playerName">'+leaders[l][0]+'</div>\
-                          <div class="pointScore">'+leaders[l][1]+'</div></div>';
+                          <div class="pointScore">'+pointScore+'</div></div>';
                       }
                       linesarr.push(line);
                   }
                   $('#leadersRow').html(linesarr.join(''));
                 }
     });
-
-    if(twitchUsername=='') {
-      $('#startScreen').hide();
-      $('#loginScreen').show();
-  } else {
-      $('#startScreen').show();
-      $('#loginScreen').hide();
-  }
 }
 
 async function dbWrite(userid, score) {
-  console.log('started writing');
-  const username = await axios.get("https://api.twitch.tv/kraken/users/"+userid, {
+  // console.log('started writing');
+  if (isAuthed) {
+    const username = await axios.get("https://api.twitch.tv/kraken/users/"+userid, {
     headers: {
       "Accept": "application/vnd.twitchtv.v5+json",
       "Client-ID": clientId,
     },
   }).then(function(response) {
-    console.log(response);
+    // console.log(response);
     return response.data.name;
   }).catch(error => console.log(error));
   if(userid!==null && userid!==undefined && userid!== "") {
@@ -174,5 +181,6 @@ async function dbWrite(userid, score) {
       "score": parseInt(score),
       "username": username
     });
+  }
   }
 }

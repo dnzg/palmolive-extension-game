@@ -2,8 +2,9 @@
 let recordScore=0;
 let isMuted = false;
 
+
 function ratingWrite(num) {
-    console.log(num, recordScore);
+    // console.log(num, recordScore);
     if(parseInt(num) > parseInt(recordScore)) {
         dbWrite(twitchUsername, num);
     }

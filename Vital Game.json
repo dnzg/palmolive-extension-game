@@ -14,16 +14,16 @@
         "isSubscriptionStatusAvailable": false
       },
       "frameSize": {
-        "width": 1280,
-        "height": 720
+        "width": 375,
+        "height": 822
       },
-      "id": "3",
+      "id": "1",
       "isPopout": false,
       "label": "",
       "linked": false,
       "linkedUserId": "",
       "orientation": "Portrait",
-      "type": "video_overlay",
+      "type": "mobile",
       "viewerType": "Broadcaster"
     }
   ],

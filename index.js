@@ -6,8 +6,8 @@ const public = path.join(__dirname, "public");
 app.get("/", function(req, res) {
 	res.sendFile(path.join(public, "video_overlay.html"));
 });
-app.get("/test", function(req, res) {
-	res.sendFile(path.join(public, "index2.html"));
+app.get("/config", function(req, res) {
+	res.sendFile(path.join(public, "config.html"));
 });
 app.use("/", express.static(public));
 

@@ -1,14 +1,14 @@
 let W = $("#bodyGlobal").width();
 let H = $("#bodyGlobal").height();
 
-let MAX_ENEMY = 5;
+let MAX_ENEMY = 6;
 const MAX_LIFE = 3;
 const TimeoutBeforeGame = 3;
 let MOBILE_TYPE = false;
-let BIRD_VEL = parseInt((H/70).toFixed());
-let COOLDOWNGUN, QUAN_BLASTS, lockEnemies, enemies = [], bullets = [], bonus = [], explosions = [], explosionAnim = [], bulletImg, enemyImg1b, enemyImg2b, state = 0, img1, img2, img3, img4, back, flap, met1, met2, GunDamage, blastimg, laserimg, laserGreenimg, laserGreenExpimg, laserGreenCirimg, laserVioletExpimg, laserVioletCirimg, laserVioletimg, gameover, blast_sound, laser_sound, freeze_sound, boom_sound, GlobalBulletVar, bonusImg, bonus1, bonus2, bonus3, bonus4, redBlasts=0, redBlastBlock=false, guntype, shakingScreen=false, bigboom = [], boom = [], bigboomGlobal=false, bi = 0, ints = [], scoreGlobal = 0, GRAVITY_N=0.45, BLASTS_COUNT, birdAsset, GunDamageRed, redBlastImb=false, TIMEOUT_BLUE=1000, TIMEOUT_FREEZE=3000, nothingSounds=true, birdImg, birdActive, blastss;
+let BIRD_VEL;
+let COOLDOWNGUN, QUAN_BLASTS, lockEnemies, enemies = [], bullets = [], bonus = [], explosions = [], explosionAnim = [], bulletImg, enemyImg1b, enemyImg2b, state = 0, img1, img2, img3, img4, back, flap, met1, met2, GunDamage, blastimg, laserimg, laserGreenimg, laserGreenExpimg, laserGreenCirimg, laserVioletExpimg, laserVioletCirimg, laserVioletimg, gameover, blast_sound, laser_sound, freeze_sound, boom_sound, GlobalBulletVar, bonusImg, bonus1, bonus2, bonus3, bonus4, redBlasts=0, redBlastBlock=false, guntype, shakingScreen=false, bigboom = [], boom = [], bigboomGlobal=false, bi = 0, ints = [], scoreGlobal = 0, GRAVITY_N=0.475, BLASTS_COUNT, birdAsset, GunDamageRed, redBlastImb=false, TIMEOUT_BLUE=1000, TIMEOUT_FREEZE=3000, nothingSounds=true, birdImg, birdActive, blastss;
 var pipe1, pipe2, pipe3, bird, button, isMenu = 1, score = 0, LastScore, x1 = 0, x2, scrollSpeed = 0.65;
-
+let HEADER_LIMIT;
 let url = window.location.search.slice(1).split('&');
 let url_object = {};
 for (let u = 0; u < url.length; u++) {
@@ -17,8 +17,6 @@ for (let u = 0; u < url.length; u++) {
 if(url_object.platform=='mobile'){
     MOBILE_TYPE=true;
 }
-let HEADER_LIMIT=W/6;
-
 
 const callbackAudio = function(state) {
     if(state) {
@@ -27,7 +25,6 @@ const callbackAudio = function(state) {
         nothingSounds = false;
     }
 }
-
 
 if (MOBILE_TYPE) {
     $('#bodyGlobal').addClass('mobile_bodyGlobal');
@@ -54,17 +51,25 @@ if (MOBILE_TYPE) {
 $(window).on('load resize', function() {
     W = $("#bodyGlobal").width();
     H = $("#bodyGlobal").height();
-    if($(window).width()<400){
-        $('#gameoverInside').height(0.95*H).width(0.95*W);
-        $('header').height(W/6);
-    } else {
-        $('header').height(W/20);
-        if(!MOBILE_TYPE) { $('#gameoverInside').height(0.89*W).width(W/2); }
-        else { $('#gameoverInside').height(0.95*H).width(0.95*W); }
-    }
+    // if($(window).width()<400){
+    //     // $('#gameoverInside').height(0.95*H).width(0.95*W);
+    //     $('header').height(W/6);
+    // } else {
+    //     $('header').height(W/20);
+    //     // if(!MOBILE_TYPE) { $('#gameoverInside').height(0.89*H).width(W/2); }
+    //     // else { $('#gameoverInside').height(0.95*H).width(0.95*W); }
+    // }
+    HEADER_LIMIT = H/4;
 
     BIRD_VEL = parseInt((H/70).toFixed());
-    if(MOBILE_TYPE) {BIRD_VEL=8; MAX_ENEMY=4;HEADER_LIMIT=W/2;};
+    if(MOBILE_TYPE) {
+        // BIRD_VEL=8; 
+        BIRD_VEL = parseInt((H/60).toFixed());
+        MAX_ENEMY=4;
+        // HEADER_LIMIT=W/2;
+    };
+
+    // console.log(HEADER_LIMIT);
 });
 
 function preload() {
@@ -196,16 +201,21 @@ function timeoutscreen() {
             isMenu = 1;
         }
         for (let i=0; i<MAX_ENEMY; i++) {
-            if(!lockEnemies) enemies[i] = new Enemy();
+            if(!lockEnemies)
+                enemies[i] = new Enemy();
         }
 
         startWindow(false);
     }, TimeoutBeforeGame*1000);
 }
 
+
 function leaderboard(state) {
-    if(state) $('#leaderboard').show();
-    else $('#leaderboard').hide();
+    if(state) {
+        $('#leaderboard').show();
+        firebase.analytics().logEvent('leaderboard_visit');
+    }
+    else { $('#leaderboard').hide(); }
 }
 
 function Reset(num) {
@@ -289,7 +299,7 @@ function GlobalBullet(x, y) {
                 }
             }
             d++;
-            if(d == 4) {
+            if(d == 3) {
                 lockEnemies=true;
                 clearInterval(destroyEverything)
             };
@@ -298,7 +308,7 @@ function GlobalBullet(x, y) {
             bigboomGlobal=false;
             shakingScreen=false;
             lockEnemies=false;
-        }, 5000);
+        }, 3500);
 
     } else if(GlobalBulletVar==1) {
         var bul = new Bullet3(x, y);
@@ -391,13 +401,13 @@ function draw() {
 			}
 			
 		}
-		// Enemy out of screen
+        // Enemy out of screen
 		for (let i = 0; i < enemies.length; i++) {
 			if (intersectWithBird(bird, enemies[i])) {
                 gameoverscreen();
             }
             if(enemies[i]!==undefined) {
-                if (enemies[i].x < -1*width) {
+                if (enemies[i].x < 0) {
                     enemies[i].reborn();
                 }
             }
@@ -425,6 +435,7 @@ function draw() {
         bulletMove();	
 
         boomMove();
+        // console.log(isMuted);
     }
 }
 
@@ -533,9 +544,9 @@ function bulletMove() {
                         enemies[j].reborn();
                     }
                     if(guntype==1 && enemies[j].type==1) {
-                        if(!isMuted) {
-                            playAudio(blastss);
-                        }
+                        // if(!isMuted) {
+                        //     playAudio(blastss);
+                        // }
                         enemies[j].image = enemyImg1i;
                         enemies[j].image.width = H/7;
                         enemies[j].image.height = H/7;
@@ -547,9 +558,9 @@ function bulletMove() {
                             }
                         }, 400);
                     } else if(guntype==1 && enemies[j].type==2) {
-                        if(!isMuted && nothingSounds) {
-                            playAudio(blastss);
-                        }
+                        // if(!isMuted && nothingSounds) {
+                        //     playAudio(blastss);
+                        // }
                         enemies[j].image = enemyImg2i;
                         enemies[j].image.width = H/7;
                         enemies[j].image.height = H/7;
@@ -562,6 +573,7 @@ function bulletMove() {
                         }, 400);
                     } else {
                         enemies[j].life -=1;
+                        enemies[j].image = enemyImg2i;
                     }
                 }
 			}
@@ -650,8 +662,8 @@ class Bullet1 {
         image(laserGreenCirimg, this.x+36, this.y, 20, 20);
         image(laserGreenExpimg, this.x+10+W/2, this.y-10, 40, 40);
 
-        if(TIMEOUT_BLUE===5000) {
-            for (let o = 0; o < enemies.length; o++) {
+        if(TIMEOUT_BLUE===2000) {
+            for (let o = 0; o < 3; o++) {
                 explosions.push(createVector(enemies[o].x,enemies[o].y, frameCount));   
                 enemies[o].reborn();
                 if(!isMuted && nothingSounds) {
@@ -745,7 +757,7 @@ class Enemy{
 	}
 
 	reborn() {
-		this.y = random(12+(W/15), H);
+		this.y = random(HEADER_LIMIT+12, H);
         this.x = random(W+400, W);
         		
 		let enemyLottery = random(1,4);
@@ -832,14 +844,12 @@ class Bonus {
             }, 5000);
             //more power to blast
         } else if(guntype==4) {
-            TIMEOUT_BLUE = 5000;
+            TIMEOUT_BLUE = 2000;
             birdAsset = birdActive;
             
             setTimeout(() => {
                 birdAsset = birdImg;
             }, TIMEOUT_BLUE);
-
-
         } 
     }
 }
@@ -920,3 +930,10 @@ $("#go3").on('click', function() { startWindow(true) });
 $('.cardship').on('click', function() {
     chooseShip(parseInt($(this).data('num')));
 });
+
+$('body').bind('touchstart', function(event) {
+    countTouches(event);
+}).bind('touchend', function(event) {
+    countTouches(event);
+});
+
