@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Extension Game for Palmolive",
   "main": "index.js",
+  "buildNumber": "19",
   "scripts": {
     "dev": "run-p start watch:css functions browser",
     "functions": "cd functions && npm run serve",
@@ -10,7 +11,9 @@
     "watch:css": "onchange 'public/scss' -- npm run scss",
     "start": "node index.js",
     "browser": "gulp browser-sync",
-    "cert": "node bin/generate_cert.js server"
+    "cert": "node bin/generate_cert.js server",
+    "build:ext": "rm -rf ./out && cp -R ./public ./out && rm -R ./out/scss && npm run build:zip && rm -rf ./out",
+    "build:zip": "cross-env node bin/zip-build.js"
   },
   "repository": {
     "type": "git",
@@ -31,7 +34,10 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
+    "archiver": "^5.2.0",
     "browser-sync": "^2.26.14",
+    "cross-env": "^7.0.3",
+    "fs": "0.0.1-security",
     "gulp": "^4.0.2",
     "node-sass": "^5.0.0",
     "npm-run-all": "^4.1.5",

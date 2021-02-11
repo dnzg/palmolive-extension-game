@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html style="height: 100%!important; width: 100%!important;">
 <head>
   <meta http-equiv="Cache-Control" content="no-cache" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -15,9 +15,8 @@
   <meta name="msapplication-TileColor" content="#da532c">
   <meta name="msapplication-config" content="assets/favicon/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
-  <script src="js/p5.min.js"></script>
 </head>
-<body>
+<body tabindex="-1" style="height: 100%!important; width: 100%!important;">
   <div id="showGlobal">Начать игру</div>
   <div id="bodyGlobal" style="display: none;">
     <div id="hide">Скрыть</div>
@@ -43,7 +42,7 @@
       <img class="nomobile" src="assets/newgame.png" style="height: 100%;cursor: pointer;margin-right: 10px;" id="newGameButton" />
       <img class="nomobile" src="assets/leaderboard.png" style="height: 100%;cursor: pointer;margin-right: 20px;" id="leaderboardButton" />
       Мой рекорд: <span id="scoreHead">0</span>
-      <img id="ismuted" src="assets/soundoff.png" style="height: 100%; cursor: pointer;margin-left: auto;"/>
+      <img id="ismuted" src="assets/soundon.png" style="height: 100%; cursor: pointer;margin-left: auto;"/>
     </header>
 
     <div id="timeoutscreen">
@@ -110,6 +109,7 @@
     </div>
 
     <div id="blast"></div>
+    <!-- <div id="jump"></div> -->
 
     <div id="startScreen" style="display: none;">
       <img src="assets/vitbal.png" id="vitbal" />
@@ -121,14 +121,16 @@
       <a href="https://www.twitch.tv/login" target="_blank"><img src="assets/login.png" id="startButton2" /></a>
     </div>
   </div>  
-    <script src="js/fb/twitch-ext.min.js"></script>
-    <script src="js/fb/firebase-app.js"></script>
-    <script src="js/fb/firebase-database.js"></script>
-    <script src="js/fb/firebase-auth.js"></script>
-    <script src="js/fb/firebase-analytics.js"></script>
-    <script src="js/fb/axios.min.js"></script>
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+    <script src="js/p5.min.js"></script>
+
+    <script src="js/fb2/firebase-app.min.js"></script>
+    <script src="js/fb2/firebase-database.min.js"></script>
+    <script src="js/fb2/firebase-auth.min.js"></script>
+
+    <script src="js/fb2/axios.min.js"></script>
     <script src="js/jq.js"></script>
-    <script src="js/jquery-ui.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
 
 		<script src="js/fb2.js"></script>
     <script src="js/if.js"></script>

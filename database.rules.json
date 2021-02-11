@@ -1,6 +1,14 @@
 {
   "rules": {
-    ".read": "now < 1614114000000",  // 2021-2-24
-    ".write": "now < 1614114000000",  // 2021-2-24
+    "leaderboard": {
+      ".read": true,
+      ".write": false
+    },
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid"
+      }
+    }
   }
 }

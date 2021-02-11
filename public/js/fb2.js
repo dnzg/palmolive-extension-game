@@ -21,7 +21,6 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const auth = firebase.auth();
-const defaultAnalytics = firebase.analytics();
 let twitchAuth = "";
 let twitchMuted = "";
 let isAuthed = false;
@@ -53,15 +52,15 @@ function logError(_, error, status) {
 }
 
 helper.onAuthorized(async function (auth) {
-  // window.Twitch.ext.actions.requestIdShare((e) => {
-  //   console.log(e);
-  // });
+  twitchUsername = parseJwt(auth.token).user_id;
+  if(twitchUsername == undefined || twitchUsername == null || twitchUsername == '') {
+    window.Twitch.ext.actions.requestIdShare((e) => {
+      console.log(e);
+    });
+    return false;
+  }
     twitchAuth = auth;
-    twitchUsername = parseJwt(auth.token).user_id;
     clientId = auth.clientId;
-    // console.log(auth);
-    // console.log(parseJwt(auth.token));
-    // console.log(twitchUsername);
 
     const username = await axios.get("https://api.twitch.tv/kraken/users/"+twitchUsername, {
       headers: {
@@ -69,7 +68,6 @@ helper.onAuthorized(async function (auth) {
         "Client-ID": clientId,
       },
     }).then(function(response) {
-      // console.log(response)
       return response.data.name;
     }).catch(error => console.log(error));
     $('#playerName').text(username);
@@ -87,8 +85,6 @@ helper.onAuthorized(async function (auth) {
 
 helper.onContext(function (context) {
   twitchMuted = context.isMuted;
-  // isMuted = twitchMuted;
-  // sound();
 });
 
 var token = "";
@@ -120,7 +116,6 @@ function turnNum(num) {
 
 function onAuthorized() {
     db.ref("users/"+twitchUsername).on("value", (snapshot) => {
-        // console.log(snapshot.val());
         recordScore1 = snapshot.val();
         if(recordScore1!==undefined && recordScore1!==null && recordScore1!=='') {
           recordScore = recordScore1.score;
@@ -129,7 +124,6 @@ function onAuthorized() {
     });
     
     db.ref("leaderboard").on("value", (snapshot) => {
-        // console.log(snapshot.val());
         var leaders = snapshot.val();
                 var linesarr=[];
                 if(leaders!==undefined && leaders!==null) {
@@ -165,7 +159,6 @@ function onAuthorized() {
 }
 
 async function dbWrite(userid, score) {
-  // console.log('started writing');
   if (isAuthed) {
     const username = await axios.get("https://api.twitch.tv/kraken/users/"+userid, {
     headers: {
@@ -173,7 +166,6 @@ async function dbWrite(userid, score) {
       "Client-ID": clientId,
     },
   }).then(function(response) {
-    // console.log(response);
     return response.data.name;
   }).catch(error => console.log(error));
   if(userid!==null && userid!==undefined && userid!== "") {

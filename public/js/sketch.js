@@ -3,7 +3,8 @@ let H = $("#bodyGlobal").height();
 
 let MAX_ENEMY = 6;
 const MAX_LIFE = 3;
-const TimeoutBeforeGame = 3;
+const TimeoutBeforeGame = 0;
+const frameRateDigit = 60;
 let MOBILE_TYPE = false;
 let BIRD_VEL;
 let COOLDOWNGUN, QUAN_BLASTS, lockEnemies, enemies = [], bullets = [], bonus = [], explosions = [], explosionAnim = [], bulletImg, enemyImg1b, enemyImg2b, state = 0, img1, img2, img3, img4, back, flap, met1, met2, GunDamage, blastimg, laserimg, laserGreenimg, laserGreenExpimg, laserGreenCirimg, laserVioletExpimg, laserVioletCirimg, laserVioletimg, gameover, blast_sound, laser_sound, freeze_sound, boom_sound, GlobalBulletVar, bonusImg, bonus1, bonus2, bonus3, bonus4, redBlasts=0, redBlastBlock=false, guntype, shakingScreen=false, bigboom = [], boom = [], bigboomGlobal=false, bi = 0, ints = [], scoreGlobal = 0, GRAVITY_N=0.475, BLASTS_COUNT, birdAsset, GunDamageRed, redBlastImb=false, TIMEOUT_BLUE=1000, TIMEOUT_FREEZE=3000, nothingSounds=true, birdImg, birdActive, blastss;
@@ -25,6 +26,73 @@ const callbackAudio = function(state) {
         nothingSounds = false;
     }
 }
+let mouseyglobal = 0;
+let direction = '', oldY = 0, tops = [], bottoms = [];
+onmousemove = function(e){
+    var ml = e.clientY - $('#bodyGlobal').offset().top;
+    const zeroY = H/2;
+    const zeroSpace = H/2;
+    if(!isMenu) {
+        if(ml > 0 && ml <= e.clientY) {
+            // console.log(ml, zeroY);
+            mouseyglobal = ml;
+            if(e.clientY < oldY && ml < zeroY + zeroSpace && ml > zeroY - zeroSpace) {
+                direction = 'top';
+                // tops.push(1);
+            } else if (e.clientY > oldY && ml < zeroY + zeroSpace && ml > zeroY - zeroSpace) {
+                direction = 'bottom';
+                // bottoms.push(1);
+            }
+            // birdspeed(ml);
+            // // if(tops.length == 2 || tops.length >2) {
+            // //     tops = [];
+            // //     // birdmove(bird.pos.y + 4);
+            // // } else if(bottoms.length == 2 || bottoms.length > 2) {
+            // //     bottoms = [];
+            // //     // birdmove(bird.pos.y - 4);
+            // //     birdspeed(ml);
+            // // }
+        
+            console.log(direction
+            //     , tops, bottoms
+                );
+            oldY = e.clientY;
+        }
+    }
+    // var ml = e.clientY - $('#bodyGlobal').offset().top;
+    // if(ml > 0 && ml < e.clientY) {
+    //     console.log(ml);
+    //     // birdmove(-1*e.clientY);
+    //     console.log(bird.pos.y);
+    // }
+}
+
+let newYbird = 0;
+
+setInterval(() => {
+    birdspeed(mouseyglobal);
+    newYbird = H - mouseyglobal;
+    console.log(mouseyglobal)
+}, 20);
+
+const speedBird = 3;
+
+function birdspeed(mousey) {
+    console.log(bird.pos.y, mousey)
+    if(bird !== undefined) {
+        if(bird.pos.y == mousey) return;
+        
+        if (bird.pos.y < H - 20 && direction == 'top' && bird.pos.y < newYbird) {
+            birdmove(bird.pos.y + speedBird);
+        } else if (bird.pos.y > HEADER_LIMIT && direction == 'bottom' && bird.pos.y > newYbird) {
+            birdmove(bird.pos.y - speedBird);
+        }
+    }
+}
+
+$('#bodyGlobal').show();
+$('#loginScreen').hide();
+$('#startScreen').show();
 
 if (MOBILE_TYPE) {
     $('#bodyGlobal').addClass('mobile_bodyGlobal');
@@ -32,12 +100,17 @@ if (MOBILE_TYPE) {
     $('#upIco').attr('src','assets/tap.gif');
     $('#shootIco').attr('src','assets/sword.gif');
     $('#blast').show();
+    // $('#jump').hide();
     $('#hide').hide();
 } else {
     $('#hide').show();
-    $('#blast').hide();
-    $('#upIco').attr('src','assets/spacebar.gif');
-    $('#shootIco').attr('src','assets/mouse.gif');
+    // $('#jump').show();
+    // $('#blast').hide();
+    $('#blast').show();
+    $('#shootIco').attr('src','assets/sword.gif');
+    $('#upIco').attr('src','assets/mouse.gif');
+    // $('#upIco').attr('src','assets/w_key.gif');
+    // $('#shootIco').attr('src','assets/mouse.gif');
     $('#bodyGlobal').resizable({
         handles: "sw",
         minHeight: 0.55*$(window).height(),
@@ -133,18 +206,28 @@ function startWindow(state) {
         $('#scoreLeft').hide();
         $('#defaultCanvas0').hide();
         $('#blast').hide();
+        // $('#jump').hide();
         $('#gameoverscreen').hide();
     } else {
-        if(MOBILE_TYPE){$('#blast').show();}
+        $('#blast').show();
+        // if(MOBILE_TYPE){
+        //     $('#jump').hide();
+        // } else {
+        //     $('#jump').show();
+        // }
         $('#startScreen').hide();
         $('#defaultCanvas0').show();
         $('header').css('display', 'flex');
         $('#scoreLeft').show();
         $('#gameoverscreen').hide();
+        setTimeout(() => {
+            $('#warningLine').remove();
+        }, 8000);
     }
 }
 
 function gameoverscreen() {
+    $('#warningLine').remove();
     enemies.length=0;
     bonus.length=0;
     bullets.length=0;
@@ -193,7 +276,7 @@ function timeoutscreen() {
         canvas = createCanvas(W, H);
         canvas.parent("bodyGlobal");
         bird = new Bird();
-        frameRate(60);
+        frameRate(frameRateDigit);
         score = 0;
         if (isMenu == 1) {
             isMenu = 0;
@@ -205,6 +288,8 @@ function timeoutscreen() {
                 enemies[i] = new Enemy();
         }
 
+        $('<div id="warningLine"></div>').prependTo('#bodyGlobal');
+
         startWindow(false);
     }, TimeoutBeforeGame*1000);
 }
@@ -213,7 +298,7 @@ function timeoutscreen() {
 function leaderboard(state) {
     if(state) {
         $('#leaderboard').show();
-        firebase.analytics().logEvent('leaderboard_visit');
+        // firebase.analytics().logEvent('leaderboard_visit');
     }
     else { $('#leaderboard').hide(); }
 }
@@ -362,6 +447,7 @@ function setup() {
     x2 = 10*H;
     bird = new Bird();
 }
+let lineShow = true;
 function draw() {
     if (!isMenu) {
         if(shakingScreen) translate(random(-5,5),random(-5,5));
@@ -406,6 +492,7 @@ function draw() {
 			if (intersectWithBird(bird, enemies[i])) {
                 gameoverscreen();
             }
+
             if(enemies[i]!==undefined) {
                 if (enemies[i].x < 0) {
                     enemies[i].reborn();
@@ -441,27 +528,34 @@ function draw() {
 
 function mousePressed() {
     if(!isMenu && !MOBILE_TYPE) gun();
+    // if(!isMenu && !MOBILE_TYPE) birdmove();
 }
 
 function countTouches(event) {
     birdmove();
 }
-function birdmove() {
-    if(bird.pos.y > HEADER_LIMIT) {
-        bird.vel.y = -1*BIRD_VEL;
-    } else {
-        bird.vel.y = +1*BIRD_VEL/2;
-    }
+
+function birdmove(y) {
+    // if(bird.pos.y > HEADER_LIMIT) {
+    //     bird.vel.y = -1*BIRD_VEL;
+    // } else {
+    //     bird.vel.y = +1*BIRD_VEL/2;
+    // }
+    bird.pos.y=y;
 }
-function keyPressed() {
-    if (key === ' ') {
-        birdmove();
-    }
-}
+// function keyPressed() {
+//     if (keyCode === 87) {
+//         birdmove();
+//     }
+// }
 
 $('#blast').on('click', function(){
     gun();
 });
+
+// $('#jump').on('click', function(){
+//     birdmove();
+// });
 
 function edges(y1, y2) {
     if (y1 > y2) {
@@ -873,6 +967,49 @@ class Paraboom {
     }
 }
 
+let tremorRight=false;
+let tremorTop=false;
+let tcoord = 20;
+setInterval(() => {
+    if(bird!==undefined){
+        if(!tremorRight) {
+            bird.tremorX--;
+        } else if(tremorRight) {
+            bird.tremorX++;
+        }
+        if(bird.tremorX == tcoord-5) {
+            tremorRight=true;
+        } else if(bird.tremorX == tcoord) {
+            let ver = Math.floor(Math.random() * Math.floor(2));
+            if(ver==1){
+                tremorRight = false;
+            } else {
+                tremorRight = true;
+            }
+        } else if(bird.tremorX == tcoord+5) {
+            tremorRight = false;
+        }
+        
+        if(!tremorTop) {
+            bird.tremorY--;
+        } else if(tremorTop) {
+            bird.tremorY++;
+        }
+        if(bird.tremorY == tcoord-5) {
+            tremorTop=true;
+        } else if(bird.tremorY == tcoord) {
+            let ver = Math.floor(Math.random() * Math.floor(2));
+            if(ver==1){
+                tremorTop = false;
+            } else {
+                tremorTop = true;
+            }
+        } else if(bird.tremorY == tcoord+5) {
+            tremorTop = false;
+        }
+    } 
+}, frameRateDigit*2);
+
 class Bird {
     constructor() {
         this.pos = createVector(W / 10, H / 2);
@@ -886,7 +1023,9 @@ class Bird {
         this.y = this.pos.y;
         
         this.life=1;
-		
+
+		this.tremorX = tcoord;
+        this.tremorY = tcoord;
     }
     show() {
         if(guntype===0 || guntype===1) {
@@ -894,14 +1033,14 @@ class Bird {
             textFont(myFont);
             textSize(12);
             textAlign(CENTER, CENTER);
-            text(BLASTS_COUNT, this.pos.x-8, this.pos.y - 58, 34, 34);
+            text(BLASTS_COUNT, this.pos.x+12-this.tremorX, this.pos.y - this.tremorY - 32, 34, 34);
         }
 
-        image(birdAsset, this.pos.x - 20, this.pos.y - 26, this.r + 10, this.r + 10);
+        image(birdAsset, this.pos.x - this.tremorX, this.pos.y - this.tremorY, this.r + 10, this.r + 10);
     }
     update() {
-        this.vel.add(this.gravity);
-        this.pos.add(this.vel);
+        // this.vel.add(this.gravity);
+        // this.pos.add(this.vel);
         this.show();
         this.move();
     }

@@ -1,7 +1,11 @@
+// const body = document.querySelector('body');
+
+// body.addEventListener('dblclick', function (e) {
+//   e.stopPropagation();
+// });
 
 let recordScore=0;
-let isMuted = false;
-
+let isMuted = true;
 
 function ratingWrite(num) {
     // console.log(num, recordScore);
