@@ -3,7 +3,7 @@ let H = $("#bodyGlobal").height();
 
 let MAX_ENEMY = 6;
 const MAX_LIFE = 3;
-const TimeoutBeforeGame = 0;
+const TimeoutBeforeGame = 3;
 const frameRateDigit = 60;
 let MOBILE_TYPE = false;
 let BIRD_VEL;
@@ -18,53 +18,46 @@ for (let u = 0; u < url.length; u++) {
 if(url_object.platform=='mobile'){
     MOBILE_TYPE=true;
 }
+const timeoutBeforeHard = 30000;
 
-const callbackAudio = function(state) {
-    if(state) {
-        nothingSounds = true;
-    } else {
-        nothingSounds = false;
-    }
-}
 let mouseyglobal = 0;
-let direction = '', oldY = 0, tops = [], bottoms = [];
+let direction = '', oldY = 0;
+
+$(document).bind('touchmove', function (e){
+    var mlx = e.originalEvent.touches[0].clientX;
+    var ml = e.originalEvent.touches[0].clientY;
+    // if(mlx > $('#blast').offset().left || ml > $('#blast').offset().top) return;
+    const zeroY = H/2;
+    const zeroSpace = H/2;
+    if(!isMenu) {
+        if(ml > 0) {
+            mouseyglobal = ml;
+            if(ml < oldY && ml < zeroY + zeroSpace && ml > zeroY - zeroSpace) {
+                direction = 'top';
+            } else if (ml > oldY && ml < zeroY + zeroSpace && ml > zeroY - zeroSpace) {
+                direction = 'bottom';
+            }
+            oldY = ml;
+        }
+    }
+});
+
 onmousemove = function(e){
     var ml = e.clientY - $('#bodyGlobal').offset().top;
     const zeroY = H/2;
     const zeroSpace = H/2;
     if(!isMenu) {
         if(ml > 0 && ml <= e.clientY) {
-            // console.log(ml, zeroY);
             mouseyglobal = ml;
             if(e.clientY < oldY && ml < zeroY + zeroSpace && ml > zeroY - zeroSpace) {
                 direction = 'top';
-                // tops.push(1);
             } else if (e.clientY > oldY && ml < zeroY + zeroSpace && ml > zeroY - zeroSpace) {
                 direction = 'bottom';
-                // bottoms.push(1);
             }
-            // birdspeed(ml);
-            // // if(tops.length == 2 || tops.length >2) {
-            // //     tops = [];
-            // //     // birdmove(bird.pos.y + 4);
-            // // } else if(bottoms.length == 2 || bottoms.length > 2) {
-            // //     bottoms = [];
-            // //     // birdmove(bird.pos.y - 4);
-            // //     birdspeed(ml);
-            // // }
-        
-            console.log(direction
-            //     , tops, bottoms
-                );
+            // console.log(direction);
             oldY = e.clientY;
         }
     }
-    // var ml = e.clientY - $('#bodyGlobal').offset().top;
-    // if(ml > 0 && ml < e.clientY) {
-    //     console.log(ml);
-    //     // birdmove(-1*e.clientY);
-    //     console.log(bird.pos.y);
-    // }
 }
 
 let newYbird = 0;
@@ -72,20 +65,34 @@ let newYbird = 0;
 setInterval(() => {
     birdspeed(mouseyglobal);
     newYbird = H - mouseyglobal;
-    console.log(mouseyglobal)
-}, 20);
+    // console.log(mouseyglobal)
+}, speedInterval());
 
-const speedBird = 3;
+function speedBird() {
+    if(MOBILE_TYPE) {
+        return 6;
+    } else {
+        return 4;
+    }
+}
+
+function speedInterval() {
+    if(MOBILE_TYPE) {
+        return 10;
+    } else {
+        return 20;
+    }
+}
 
 function birdspeed(mousey) {
-    console.log(bird.pos.y, mousey)
+    // console.log(bird.pos.y, mousey)
     if(bird !== undefined) {
         if(bird.pos.y == mousey) return;
         
         if (bird.pos.y < H - 20 && direction == 'top' && bird.pos.y < newYbird) {
-            birdmove(bird.pos.y + speedBird);
+            birdmove(bird.pos.y + speedBird());
         } else if (bird.pos.y > HEADER_LIMIT && direction == 'bottom' && bird.pos.y > newYbird) {
-            birdmove(bird.pos.y - speedBird);
+            birdmove(bird.pos.y - speedBird());
         }
     }
 }
@@ -97,7 +104,7 @@ $('#startScreen').show();
 if (MOBILE_TYPE) {
     $('#bodyGlobal').addClass('mobile_bodyGlobal');
     
-    $('#upIco').attr('src','assets/tap.gif');
+    $('#upIco').attr('src','assets/updowntouch.gif');
     $('#shootIco').attr('src','assets/sword.gif');
     $('#blast').show();
     // $('#jump').hide();
@@ -106,11 +113,9 @@ if (MOBILE_TYPE) {
     $('#hide').show();
     // $('#jump').show();
     // $('#blast').hide();
-    $('#blast').show();
-    $('#shootIco').attr('src','assets/sword.gif');
-    $('#upIco').attr('src','assets/mouse.gif');
-    // $('#upIco').attr('src','assets/w_key.gif');
-    // $('#shootIco').attr('src','assets/mouse.gif');
+    $('#blast').hide();
+    $('#shootIco').attr('src','assets/mouse.gif');
+    $('#upIco').attr('src','assets/updownmouse.gif');
     $('#bodyGlobal').resizable({
         handles: "sw",
         minHeight: 0.55*$(window).height(),
@@ -199,6 +204,9 @@ function preload() {
 	}
 }
 
+        
+let levelEnemy = 'easy';
+
 function startWindow(state) {
     if(state) {
         $('#startScreen').show();
@@ -209,8 +217,14 @@ function startWindow(state) {
         // $('#jump').hide();
         $('#gameoverscreen').hide();
     } else {
-        $('#blast').show();
-        // if(MOBILE_TYPE){
+        setTimeout(() => {
+            levelEnemy = 'hard';
+        }, timeoutBeforeHard);
+        if(MOBILE_TYPE){
+            $('#blast').show();
+        } else {
+            $('#blast').hide();
+        }
         //     $('#jump').hide();
         // } else {
         //     $('#jump').show();
@@ -227,6 +241,7 @@ function startWindow(state) {
 }
 
 function gameoverscreen() {
+    levelEnemy = 'easy';
     $('#warningLine').remove();
     enemies.length=0;
     bonus.length=0;
@@ -299,6 +314,10 @@ function leaderboard(state) {
     if(state) {
         $('#leaderboard').show();
         // firebase.analytics().logEvent('leaderboard_visit');
+        // ga('send', 'event', 'leaderboard_visit');
+        // const analytics = firebase.analytics();
+        // analytics.logEvent('goal_completion', { name: 'lever_puzzle'});
+        ga('send', 'event', 'leaderboard_visit', 'play', 'Fall Campaign');
     }
     else { $('#leaderboard').hide(); }
 }
@@ -355,7 +374,7 @@ function GlobalBullet(x, y) {
         QUAN_BLASTS=1;
         enemyImg1b = enemyImg1b;
         enemyImg2b = enemyImg2b;
-        COOLDOWNGUN=15;
+        COOLDOWNGUN=10;
         GunDamage=2;
         var d = 0;
         bigboomGlobal=true;
@@ -532,7 +551,7 @@ function mousePressed() {
 }
 
 function countTouches(event) {
-    birdmove();
+    // birdmove();
 }
 
 function birdmove(y) {
@@ -840,9 +859,12 @@ let EnemiesArray = {
 };
 function enemyspeed() {
     if(MOBILE_TYPE){
-        return random(2.5,3.5);
+        if(levelEnemy=='easy') { return random(5.5,8.5); }
+        else if (levelEnemy == 'hard') { return random(7.5,10.5); }
     } else {
-        return random(4,7);
+        // console.log(levelEnemy);
+        if(levelEnemy=='easy') { return random(4,7); }
+        else if (levelEnemy == 'hard') { return random(6,9); }
     }
 }
 class Enemy{
