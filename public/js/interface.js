@@ -3,18 +3,9 @@
 //   e.stopPropagation();
 // });
 
-let recordScore=0;
-let isMuted = true;
-
-function ratingWrite(num) {
-    // console.log(num, recordScore);
-    if(parseInt(num) > parseInt(recordScore)) {
-        dbWrite(twitchUsername, num);
-    }
-}
 
 function hideBody(state) {
-    if(state) {
+    if (state) {
         $('#bodyGlobal').hide();
         $('#showGlobal').show();
     } else {
@@ -24,12 +15,12 @@ function hideBody(state) {
 }
 
 function sound(e) {
-    if(isMuted) {
-        isMuted=false;
-        $('#ismuted').attr('src','assets/soundoff.png');
+    if (isMuted) {
+        isMuted = false;
+        $('#ismuted').attr('src', 'assets/soundoff.png');
     } else {
-        isMuted=true;
-        $('#ismuted').attr('src','assets/soundon.png');
+        isMuted = true;
+        $('#ismuted').attr('src', 'assets/soundon.png');
     }
 }
 
@@ -42,21 +33,21 @@ function chooseShip(num) {
         '<span class="redColor">Очищение и перезагрузка</span><br/>Стреляет скоростными бластерами',
         '<span class="blueColor">Спорт</span><br/>Стреляет мощными энерголучами',
     ];
-    var n = num+1;
-    $('[data-id="space"]').attr('src', 'assets/ship'+n+'.png');
+    var n = num + 1;
+    $('[data-id="space"]').attr('src', 'assets/ship' + n + '.png');
     $('[data-id="desc"]').html(arr[num]);
     $('[data-id="ship"]').data('value', num);
 
-    $('#spacedetails').css('display','flex');
+    $('#spacedetails').css('display', 'flex');
 }
 
-function detaction(num){
+function detaction(num) {
     switch (num) {
         case 0:
-            $('#chooseship').css('display','flex');
+            $('#chooseship').css('display', 'flex');
             $('#spacedetails').hide();
             break;
-        
+
         case 1:
             $('#chooseship').hide();
             $('#spacedetails').hide();
@@ -64,32 +55,33 @@ function detaction(num){
             break;
 
         case 2:
-            $('#chooseship').css('display','flex');
+            $('#chooseship').css('display', 'flex');
             break;
     }
 }
 
 function playAudio(name) {
+    if(isMuted) return;
     var id = makeid(3);
     $("body").prepend(
         '<audio id="audioElement_' + id + '" style="color:#fff">\
-        <source src="sounds/'+ name +'.mp3" type="audio/mpeg"></audio>'
-        );
-        $("#audioElement_" + id + "")[0].play();
-        $("#audioElement_" + id + "")[0].onended = function () {
-            $("#audioElement_" + id + "").remove();
-        };
-    }
+        <source src="sounds/' + name + '.mp3" type="audio/mpeg"></audio>'
+    );
+    $("#audioElement_" + id + "")[0].play();
+    $("#audioElement_" + id + "")[0].onended = function() {
+        $("#audioElement_" + id + "").remove();
+    };
+}
 
 function makeid(length) {
-  var result = "";
-  var characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
+    var result = "";
+    var characters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }
 
 function parseJwt(token) {
