@@ -326,6 +326,7 @@ let COOLDOWNGUN, ARCTIC_IMB = false, lockEnemies, enemies = [],
     TIMEOUT_BLUE = 1000,
     TIMEOUT_FREEZE,
     SPORT_LASER_HEIGHT = 10,
+    areLettersRed = false,
     birdImg, birdActive, blastsound;
 var pipe1, pipe2, pipe3, bird, button, isMenu = 1,
     score = 0,
@@ -408,6 +409,7 @@ function startWindow(state) {
 }
 
 function gameoverscreen() {
+    areLettersRed = false;
     lockGun = false;
     levelEnemy = 'easy';
     $('#warningLine').hide();
@@ -472,7 +474,7 @@ function timeoutscreen() {
         }
 
         $('#warningLine').show();
-        console.log('test');
+        // console.log('test');
 
         startWindow(false);
     }, TimeoutBeforeGame * 1000);

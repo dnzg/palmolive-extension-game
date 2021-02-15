@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Extension Game for Palmolive",
   "main": "index.js",
-  "buildNumber": "43",
+  "buildNumber": "45",
   "scripts": {
     "dev": "run-p start watch:css functions browser",
     "functions": "cd functions && npm run serve",

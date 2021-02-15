@@ -148,8 +148,9 @@ class Bird {
     }
     show() {
         if (BulletNum === 0 || BulletNum === 1) {
-            if(TEXT_ABOVE_BIRD==0) fill(255, 86, 86, 75);
-            else fill(109, 255, 85, 75);
+            if(areLettersRed) { fill(255, 86, 86, 75); }
+            else if(TEXT_ABOVE_BIRD==0) { fill(255, 86, 86, 75); } 
+            else { fill(109, 255, 85, 75); } 
             textFont(myFont);
             textSize(12);
             textAlign(CENTER, CENTER);

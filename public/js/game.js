@@ -70,8 +70,8 @@ function resetArcticTimer() {
                     }
             }, 1000);
             changeTime;
-        
             changeTimeout = setTimeout(() => {
+                areLettersRed = true;
                 var i = TEXT_ABOVE_BIRD;
                 changeTime = setInterval(() => {
                     if(i < 3) {
@@ -79,7 +79,7 @@ function resetArcticTimer() {
                         // console.log('second: ', i);
                         TEXT_ABOVE_BIRD = i;
                     }
-                    if(i > 3 || i == 3) clearInterval(changeTime); 
+                    if(i > 3 || i == 3) { areLettersRed = false; clearInterval(changeTime); }
                 }, 1000);
             }, prevI*1000);
             changeTimeout;
@@ -616,6 +616,7 @@ class Bonus {
                 redBlastBlock = false;
                 redBlastImb = false;
             }, 10000);
+            redBoostTimeout;
         } else if (BulletNum == 3) {
             SPORT_LASER_HEIGHT = 20;
             // TIMEOUT_BLUE = 3000;
