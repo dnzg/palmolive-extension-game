@@ -4,7 +4,16 @@ let direction = '',
     oldY = 0;
 
 $(document).bind('touchmove', function(e) {
+    if(e.touches.length == 2) { 
+        for (let t = 0; t < e.touches.length; t++) {
+            if(e.touches[t].clientX > $('#blast').offset().left && e.touches[t].clientY > $('#blast').offset().top) {
+                gun();
+            }
+        }
+    }
     var ml = e.originalEvent.touches[0].clientY;
+    var mlx = e.originalEvent.touches[0].clientX;
+    // console.log(ml, mlx);
     const zeroY = H / 2;
     const zeroSpace = H / 2;
     if (!isMenu) {
@@ -42,8 +51,10 @@ onmousemove = function(e) {
 let newYbird = 0;
 
 setInterval(() => {
-    birdspeed(mouseyglobal);
-    newYbird = H - mouseyglobal;
+    if(!isMenu) {
+        birdspeed(mouseyglobal);
+        newYbird = H - mouseyglobal;
+    }
 }, speedInterval());
 
 function speedBird() {
@@ -65,6 +76,7 @@ function speedInterval() {
 function birdspeed(mousey) {
     if (bird !== undefined) {
         if (bird.pos.y == mousey) return;
+        if (mousey > $('#blast').offset().top && MOBILE_TYPE) return;
 
         if (bird.pos.y < H - 20 && direction == 'top' && bird.pos.y < newYbird) {
             bird.pos.y = bird.pos.y + speedBird();

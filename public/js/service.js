@@ -21,7 +21,7 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const auth = firebase.auth();
-const analytics = firebase.analytics();
+// const analytics = firebase.analytics();
 let twitchAuth = "";
 let twitchMuted = "";
 let isAuthed = false;
@@ -161,12 +161,6 @@ function onAuthorized() {
     });
 }
 
-function ratingWrite(num) {
-    if (parseInt(num) > parseInt(recordScore)) {
-        dbWrite(twitchUsername, num);
-    }
-}
-
 async function dbWrite(userid, score) {
     if (isAuthed) {
         const username = await axios.get("https://api.twitch.tv/kraken/users/" + userid, {
@@ -178,11 +172,17 @@ async function dbWrite(userid, score) {
             return response.data.name;
         }).catch(error => console.log(error));
         if (userid !== null && userid !== undefined && userid !== "") {
-            await db.ref('users/' + userid + '/score').set(parseInt(score));
-            await db.ref('users/' + userid + '/username').set(username);
+            if (parseInt(score) > parseInt(recordScore)) {
+                await db.ref('users/' + userid + '/score').set(parseInt(score));
+                await db.ref('users/' + userid + '/username').set(username);
+            }
             await db.ref('users/' + userid + '/gamesCount')
                 .transaction(function(gamesCount) {
                     return gamesCount + 1;
+                });
+            await db.ref('users/' + userid + '/scoreTotal')
+                .transaction(function(scoreTotal) {
+                    return scoreTotal + parseInt(score);
                 });
         }
     }
@@ -231,8 +231,8 @@ function preload() {
     bonus4 = loadImage('assets/bonus4.png');
     bulletImg = loadImage('assets/bullet.png');
     enemyImg1 = loadImage('assets/enemy1.png');
-    enemyImg1b = loadImage('assets/m1b.png');
-    enemyImg2b = loadImage('assets/m2b.png');
+    enemyImg1b_b = loadImage('assets/m1b.png');
+    enemyImg2b_b = loadImage('assets/m2b.png');
 
     enemyImg1i = loadImage('assets/m1i.png');
     enemyImg2i = loadImage('assets/m2i.png');
@@ -260,7 +260,8 @@ $("#backLeader").on('click', function() {
     leaderboard(false)
 });
 $("#newGameButton").on('click', function() {
-    Reset(BulletNum)
+    gameoverscreen();
+    startWindow(true);
 });
 $("#leaderboardButton").on('click', function() {
     leaderboard(true)
@@ -294,18 +295,12 @@ $('.cardship').on('click', function() {
     chooseShip(parseInt($(this).data('num')));
 });
 
-$('body').bind('touchstart', function(event) {
-    countTouches(event);
-}).bind('touchend', function(event) {
-    countTouches(event);
-});
-
 let W = $("#bodyGlobal").width();
 let H = $("#bodyGlobal").height();
 
 let MAX_ENEMY = 6;
 const MAX_LIFE = 3;
-const TimeoutBeforeGame = IS_DEV ? 0 : 3;
+const TimeoutBeforeGame = 3;
 const frameRateDigit = 60;
 let MOBILE_TYPE = false;
 let BIRD_VEL;
@@ -314,7 +309,7 @@ let COOLDOWNGUN, ARCTIC_IMB = false, lockEnemies, enemies = [],
     bonus = [],
     explosions = [],
     explosionAnim = [],
-    bulletImg, enemyImg1b, enemyImg2b, state = 0,
+    bulletImg, enemyImg1b, enemyImg1b_b, enemyImg2b_b, enemyImg2b, state = 0,
     img1, img2, img3, img4, back, flap, met1, met2, GunDamage, blastimg, laserimg, laserGreenimg, laserGreenExpimg, laserGreenCirimg, laserVioletExpimg, laserVioletCirimg, laserVioletimg, gameover, blast_sound, laser_sound, freeze_sound, boom_sound, BulletNum, bonusImg, bonus1, bonus2, bonus3, bonus4, redBlasts = 0,
     redBlastBlock = false,
     guntype, shakingScreen = false,
@@ -411,6 +406,7 @@ function startWindow(state) {
 }
 
 function gameoverscreen() {
+    lockGun = false;
     levelEnemy = 'easy';
     $('#warningLine').remove();
     enemies.length = 0;
@@ -429,7 +425,7 @@ function gameoverscreen() {
     ResetGameover();
     enemies = [];
     $('#gameoverInside h3').text(s(score));
-    ratingWrite(s(score));
+    dbWrite(twitchUsername, s(score));
     $('#gameoverscreen').show();
 }
 
@@ -478,7 +474,7 @@ function timeoutscreen() {
 function leaderboard(state) {
     if (state) {
         $('#leaderboard').show();
-        analytics.logEvent('leaderboard_visit');
+        ga('send', 'event', 'leaderboard', 'visit', { cookieFlags: "SameSite=None; Secure" });
     } else {
         $('#leaderboard').hide();
     }
