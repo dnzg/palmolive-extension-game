@@ -56,14 +56,16 @@ let changeTimeout;
 
 function resetArcticTimer() {
     // console.log('TEXT_ABOVE_BIRD:', TEXT_ABOVE_BIRD);
-        if(TEXT_ABOVE_BIRD === 3 || TEXT_ABOVE_BIRD === 6) {
+        if(TEXT_ABOVE_BIRD < 7) {
+            console.log(TEXT_ABOVE_BIRD, TIMEOUT_FREEZE);
             var prevI = TEXT_ABOVE_BIRD + 1;
             var b = TEXT_ABOVE_BIRD;
             changeTime = setInterval(() => {
+                console.log(b);
                     if(b < 1 || b == 1) clearInterval(changeTime);
                     if(b > 0 && b < 7) {
                         b--;
-                        // console.log('first: ', b);
+                        console.log('first: ', b);
                         TEXT_ABOVE_BIRD = b;
                     }
             }, 1000);
@@ -278,11 +280,7 @@ function gun() {
     if (redBlasts > 10) redBlasts = 0;
     if (lockGun || BLASTS_COUNT <= 0) return; // if gun is locked or empry — deny
     if (BulletNum == 2 && redBlastBlock) return;
-    if (BulletNum == 1) {
-        if(TEXT_ABOVE_BIRD == 6 || TEXT_ABOVE_BIRD == 3) {} else {
-            return;
-        }
-    }
+    if (BulletNum == 1 && TEXT_ABOVE_BIRD < 2) return;
     
     if (BulletNum !== 1) lockGun = true; // gun should be locked until cooldown 
     // console.log('yo: ', lockGun, BulletNum);
@@ -567,7 +565,7 @@ class Enemy {
     }
 }
 
-
+let redBoostTimeout;
 class Bonus {
     constructor(type = 0) { //random ensuite
         this.x = random(W + 400, W);
@@ -592,8 +590,12 @@ class Bonus {
         } else if (BulletNum == 1) {
             clearInterval(changeTime);
             clearTimeout(changeTimeout);
-            TEXT_ABOVE_BIRD = 6;
-            TIMEOUT_FREEZE = 6000;
+            if(TEXT_ABOVE_BIRD + 3 > 6) {
+                TEXT_ABOVE_BIRD = 6;    
+            } else {
+                TEXT_ABOVE_BIRD = TEXT_ABOVE_BIRD + 3;
+            }
+            TIMEOUT_FREEZE = TEXT_ABOVE_BIRD*1000;
             if(lockGun) {
                 bullets.length = 0;
                 clearTimeout(getBackTimeoutFreeze);
@@ -601,18 +603,19 @@ class Bonus {
                 bullets.push(gunFunc(bird.pos.x, bird.pos.y)); // FIRE
             }
         } else if (BulletNum == 2) {
+            clearTimeout(redBoostTimeout);
             GunDamageRed = 2;
             birdAsset = birdActive;
             redBlastImb = true;
             redBlastBlock = false;
             redBlasts = 0;
             
-            setTimeout(() => {
+            redBoostTimeout = setTimeout(() => {
                 birdAsset = birdImg;
                 GunDamageRed = 1;
                 redBlastBlock = false;
                 redBlastImb = false;
-            }, 5000);
+            }, 10000);
         } else if (BulletNum == 3) {
             SPORT_LASER_HEIGHT = 20;
             // TIMEOUT_BLUE = 3000;

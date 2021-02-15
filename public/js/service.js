@@ -264,7 +264,8 @@ $("#newGameButton").on('click', function() {
     startWindow(true);
 });
 $("#leaderboardButton").on('click', function() {
-    leaderboard(true)
+    leaderboard(true);
+    ga('send', 'event', 'leaderboard', 'visit', 'from-topMenu', { cookieFlags: "SameSite=None; Secure" });
 });
 $("#ismuted").on('click', function() {
     sound()
@@ -284,7 +285,8 @@ $("#go1").on('click', function() {
     Reset(BulletNum)
 });
 $("#go2").on('click', function() {
-    leaderboard(true)
+    leaderboard(true);
+    ga('send', 'event', 'leaderboard', 'visit', 'from-gameOver', { cookieFlags: "SameSite=None; Secure" });
 });
 $("#go3").on('click', function() {
     startWindow(true)
@@ -384,7 +386,7 @@ function startWindow(state) {
         $('#defaultCanvas0').hide();
         $('#blast').hide();
         $('#gameoverscreen').hide();
-        $('#warningLine').remove();
+        $('#warningLine').hide();
     } else {
         setTimeout(() => {
             levelEnemy = 'hard';
@@ -400,7 +402,7 @@ function startWindow(state) {
         $('#scoreLeft').show();
         $('#gameoverscreen').hide();
         setTimeout(() => {
-            $('#warningLine').remove();
+            $('#warningLine').hide();
         }, 8000);
     }
 }
@@ -408,14 +410,19 @@ function startWindow(state) {
 function gameoverscreen() {
     lockGun = false;
     levelEnemy = 'easy';
-    $('#warningLine').remove();
+    $('#warningLine').hide();
     enemies.length = 0;
     bonus.length = 0;
     bullets.length = 0;
     if (BulletNum == 2) {
         redBlastBlock = false;
         redBlasts = 0;
+    } else if (BulletNum == 1) {
+        TEXT_ABOVE_BIRD = 3;
+        clearInterval(changeTime);
+        clearTimeout(changeTimeout);
     }
+    
     
     playAudio('gameover');
     $('#blocker').show();
@@ -464,7 +471,8 @@ function timeoutscreen() {
                 enemies[i] = new Enemy();
         }
 
-        $('<div id="warningLine"></div>').prependTo('#bodyGlobal');
+        $('#warningLine').show();
+        console.log('test');
 
         startWindow(false);
     }, TimeoutBeforeGame * 1000);
@@ -474,7 +482,6 @@ function timeoutscreen() {
 function leaderboard(state) {
     if (state) {
         $('#leaderboard').show();
-        ga('send', 'event', 'leaderboard', 'visit', { cookieFlags: "SameSite=None; Secure" });
     } else {
         $('#leaderboard').hide();
     }
