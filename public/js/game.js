@@ -57,15 +57,15 @@ let changeTimeout;
 function resetArcticTimer() {
     // console.log('TEXT_ABOVE_BIRD:', TEXT_ABOVE_BIRD);
         if(TEXT_ABOVE_BIRD < 7) {
-            console.log(TEXT_ABOVE_BIRD, TIMEOUT_FREEZE);
+            // console.log(TEXT_ABOVE_BIRD, TIMEOUT_FREEZE);
             var prevI = TEXT_ABOVE_BIRD + 1;
             var b = TEXT_ABOVE_BIRD;
             changeTime = setInterval(() => {
-                console.log(b);
+                // console.log(b);
                     if(b < 1 || b == 1) clearInterval(changeTime);
                     if(b > 0 && b < 7) {
                         b--;
-                        console.log('first: ', b);
+                        // console.log('first: ', b);
                         TEXT_ABOVE_BIRD = b;
                     }
             }, 1000);
