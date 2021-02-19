@@ -4,6 +4,9 @@
   <meta http-equiv="Cache-Control" content="no-cache" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta charset="utf-8">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-config" content="assets/favicon/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/jquery-ui.css">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
@@ -12,9 +15,7 @@
   <link rel="manifest" href="assets/favicon/site.webmanifest">
   <link rel="mask-icon" href="assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
   <link rel="shortcut icon" href="assets/favicon/favicon.ico">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="msapplication-config" content="assets/favicon/browserconfig.xml">
-  <meta name="theme-color" content="#ffffff">
+  <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
 </head>
 <body tabindex="-1" style="height: 100%!important; width: 100%!important;">
   <div id="showGlobal">Начать игру</div>
@@ -29,9 +30,7 @@
         <img src="assets/back.png" id="backLeader" />
         <h2>leaderboard</h2>
       </div>
-      <div class="row" id="leadersRow">
-        <!-- <div class="line">                          <div class="prize"><img src="assets/fprize.png"></div>                          <div class="playerName">bigparaboom</div>                          <div class="pointScore">3003</div></div><div class="line">                          <div class="prize"><img src="assets/sprize.png"></div>                          <div class="playerName">andre_derevensky</div>                          <div class="pointScore">104</div></div><div class="line">                          <div class="prize"><img src="assets/tprize.png"></div>                          <div class="playerName">ischenan</div>                          <div class="pointScore">93</div></div><div class="line">                          <div class="prize place">4.</div>                          <div class="playerName">danielzagidullin</div>                          <div class="pointScore">48</div></div><div class="line">                          <div class="prize place">5.</div>                          <div class="playerName">dnzgd</div>                          <div class="pointScore">28</div></div><div class="line">                          <div class="prize place">6.</div>                          <div class="playerName">break_neak</div>                          <div class="pointScore">23</div></div><div class="line">                          <div class="prize place">7.</div>                          <div class="playerName">bofh666</div>                          <div class="pointScore">2</div></div>-->
-        </div>
+      <div class="row" id="leadersRow"></div>
     </div>
 
     <div id="scoreLeft" style="display: none;">
@@ -118,11 +117,8 @@
 
     <div id="loginScreen">
       <img src="assets/vitbal2.png" id="vitbal2" />
-      <a href="https://www.twitch.tv/login" target="_blank"><img src="assets/login.png" id="startButton2" /></a>
     </div>
-  </div>  
-    <script src="js/analyt.js"></script>
-    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+  </div>
     <script src="js/lib/p5.min.js"></script>
     <script src="js/lib/firebase-app.min.js"></script>
     <script src="js/lib/firebase-database.min.js"></script>

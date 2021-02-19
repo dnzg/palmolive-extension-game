@@ -591,9 +591,11 @@ class Bonus {
             clearInterval(changeTime);
             clearTimeout(changeTimeout);
             if(TEXT_ABOVE_BIRD + 3 > 6) {
-                TEXT_ABOVE_BIRD = 6;    
+                TEXT_ABOVE_BIRD = 6;
+                areLettersRed = false;
             } else {
                 TEXT_ABOVE_BIRD = TEXT_ABOVE_BIRD + 3;
+                areLettersRed = false;
             }
             TIMEOUT_FREEZE = TEXT_ABOVE_BIRD*1000;
             if(lockGun) {
