@@ -13,7 +13,6 @@ $(document).bind('touchmove', function(e) {
     }
     var ml = e.originalEvent.touches[0].clientY;
     var mlx = e.originalEvent.touches[0].clientX;
-    // console.log(ml, mlx);
     const zeroY = H / 2;
     const zeroSpace = H / 2;
     if (!isMenu) {
@@ -41,7 +40,6 @@ onmousemove = function(e) {
             } else if (e.clientY > oldY && ml < zeroY + zeroSpace && ml > zeroY - zeroSpace) {
                 direction = 'bottom';
             }
-            // console.log(direction);
             oldY = e.clientY;
         }
     }

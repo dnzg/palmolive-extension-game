@@ -55,17 +55,13 @@ let changeTime;
 let changeTimeout;
 
 function resetArcticTimer() {
-    // console.log('TEXT_ABOVE_BIRD:', TEXT_ABOVE_BIRD);
         if(TEXT_ABOVE_BIRD < 7) {
-            // console.log(TEXT_ABOVE_BIRD, TIMEOUT_FREEZE);
             var prevI = TEXT_ABOVE_BIRD + 1;
             var b = TEXT_ABOVE_BIRD;
             changeTime = setInterval(() => {
-                // console.log(b);
                     if(b < 1 || b == 1) clearInterval(changeTime);
                     if(b > 0 && b < 7) {
                         b--;
-                        // console.log('first: ', b);
                         TEXT_ABOVE_BIRD = b;
                     }
             }, 1000);
@@ -76,7 +72,6 @@ function resetArcticTimer() {
                 changeTime = setInterval(() => {
                     if(i < 3) {
                         i++;
-                        // console.log('second: ', i);
                         TEXT_ABOVE_BIRD = i;
                     }
                     if(i > 3 || i == 3) { areLettersRed = false; clearInterval(changeTime); }
@@ -134,7 +129,6 @@ function gunFunc(x, y) {
         }, 3500);
 
     } else if (BulletNum == 1) {
-        // console.log(lockGun, TIMEOUT_FREEZE, TEXT_ABOVE_BIRD);
         var bul = new Bullet3(x, y);
         GunDamage = 1;
         enemyImg1b = enemyImg1i;
@@ -271,19 +265,16 @@ function draw() {
             boom[b].move();
             boom[b].show();
         }
-        // console.log(isMuted);
     }
 }
 
 function gun() {
-    // console.log(lockGun, BulletNum, BLASTS_COUNT);
     if (redBlasts > 10) redBlasts = 0;
     if (lockGun || BLASTS_COUNT <= 0) return; // if gun is locked or empry — deny
     if (BulletNum == 2 && redBlastBlock) return;
     if (BulletNum == 1 && TEXT_ABOVE_BIRD < 2) return;
     
     if (BulletNum !== 1) lockGun = true; // gun should be locked until cooldown 
-    // console.log('yo: ', lockGun, BulletNum);
     if (BulletNum !== 2 && BulletNum !== 3) birdAsset = birdActive; // switch to Active Skin if it's orange or white ship
     setTimeout(() => {
         if (BulletNum !== 1) lockGun = false;
@@ -431,8 +422,6 @@ class Bullet1 {
         }
         image(laserGreenCirimg, this.x + 36, this.y + 10, 20, 20);
         image(laserGreenExpimg, this.x + 10 + W / 2, this.y, 40, 40);
-
-        // console.log(TIMEOUT_BLUE);
         
             setTimeout(() => {
                 bullets.length = 0;
@@ -493,12 +482,11 @@ class Bullet3 {
 function enemyspeed() {
     if (MOBILE_TYPE) {
         if (levelEnemy == 'easy') {
-            return random(3.5, 5.5);
+            return random(4.5, 6.5);
         } else if (levelEnemy == 'hard') {
-            return random(5.5, 6.5);
+            return random(6.5, 7.5);
         }
     } else {
-        // console.log(levelEnemy);
         if (levelEnemy == 'easy') {
             return random(3, 6);
         } else if (levelEnemy == 'hard') {

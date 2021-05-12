@@ -1,8 +1,17 @@
-// const body = document.querySelector('body');
-// body.addEventListener('dblclick', function (e) {
-//   e.stopPropagation();
-// });
+const body = document.querySelector('body');
+body.addEventListener('dblclick', function (e) {
+  e.stopPropagation();
+});
 
+function noScroll() {
+    window.scrollTo(0, 0);
+  }
+  
+  // add listener to disable scroll
+  window.addEventListener('scroll', noScroll);
+  
+  // Remove listener to re-enable scroll
+  window.removeEventListener('scroll', noScroll);
 
 function hideBody(state) {
     if (state) {

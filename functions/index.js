@@ -78,22 +78,90 @@ exports.authTwitch = functions.https.onRequest(async (req, res) => {
   }
 });
 
-const ref = "users/{userId}";
+const ref = "users/{userId}/score";
 exports.leaderUpdate = functions.database.ref(ref)
     .onWrite(async (change, context) => {
-      const users = (await db.ref("users").once("value")).val();
-      const rating = Object.keys(users).map((key) =>
-        [users[key].username, users[key].score]);
-      rating.sort(function(a, b) {
-        if (a[1] > b[1]) {
-          return -1;
+      // eslint-disable-next-line max-len
+      const usersExc = ["238549606", "47011122", "134737860", "657312412", "656913537", "658101082", "279017174"];
+      const newVal = change.after.val();
+
+      const lastPlace = (await db.ref("leaderboard").once("value")).val();
+      if (lastPlace == undefined) {
+        const users = (await db.ref("users").once("value")).val();
+
+        for (let u = 0; u < usersExc.length; u++) {
+          delete users[usersExc[u]];
         }
-        if (a[1] < b[1]) {
-          return 1;
+
+        const rating = Object.keys(users).map((key) =>
+          [users[key].username, users[key].score]);
+        rating.sort(function(a, b) {
+          if (a[1] > b[1]) {
+            return -1;
+          }
+          if (a[1] < b[1]) {
+            return 1;
+          }
+          return 0;
+        });
+        const rate = rating.slice(0, 10);
+        await db.ref("leaderboard").set(rate);
+        return false;
+      }
+
+      let newPlace;
+      for (let i = 9; i >= 0; i--) {
+        if (newVal < lastPlace[i][1]) {
+          return false;
+        } else if (newVal >= lastPlace[i][1]) {
+          if (i > 0 && newVal < lastPlace[i-1][1] || i == 0) {
+            if (usersExc.includes(context.params.userId.toString())) {
+              return false;
+            }
+
+            // eslint-disable-next-line max-len
+            const uname = (await db.ref("users/" + context.params.userId + "/username").once("value")).val();
+
+            newPlace = i;
+            lastPlace.splice(9, 1);
+            for (let g = 8; g >= newPlace; g--) {
+              lastPlace[g+1] = lastPlace[g];
+            }
+            lastPlace[newPlace] = [uname, newVal];
+
+            const names = [];
+            const result = [];
+            for (let u = 0; u < lastPlace.length; u++) {
+              names.push(lastPlace[u][0]);
+            }
+
+            for (const str of names) {
+              if (!result.includes(str)) {
+                result.push(str);
+              }
+            }
+
+            if (result.length == names.length) {
+              await db.ref("leaderboard").set(lastPlace);
+            } else {
+              const users = (await db.ref("users").once("value")).val();
+              const rating = Object.keys(users).map((key) =>
+                [users[key].username, users[key].score]);
+              rating.sort(function(a, b) {
+                if (a[1] > b[1]) {
+                  return -1;
+                }
+                if (a[1] < b[1]) {
+                  return 1;
+                }
+                return 0;
+              });
+              const rate = rating.slice(0, 10);
+              await db.ref("leaderboard").set(rate);
+            }
+            return false;
+          }
         }
-        return 0;
-      });
-      const rate = rating.slice(0, 10);
-      db.ref("leaderboard").set(rate);
+      }
     },
     );

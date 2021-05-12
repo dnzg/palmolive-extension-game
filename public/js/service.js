@@ -27,7 +27,9 @@ const firebaseConfig = {
     measurementId: "G-RW7CK32F2L"
 };
 // Initialize Firebase
+if(!IS_DEV) { firebase.database.INTERNAL.forceWebSockets(); }
 const app = firebase.initializeApp(firebaseConfig);
+// const db = firebase.database();
 const db = firebase.database();
 const auth = firebase.auth();
 // const analytics = firebase.analytics();
@@ -52,17 +54,14 @@ const signIn = async (authToken) => {
             throw new Error();
         }
         isAuthed = true;
-        // console.log("SIGNED IN");
         $('#bodyGlobal').show();
         $('#loginScreen').hide();
         $('#startScreen').show();
         twitch.onAuthorized();
     } catch (err) {
         isAuthed = false;
-        // console.error(err);
         $('#bodyGlobal').show();
-        // console.log("SIGNIN FAILED");
-        signOut();
+        auth.signOut();
     }
 };
 
@@ -80,6 +79,9 @@ helper.onAuthorized(async function(auth) {
     }
     twitchAuth = auth;
     clientId = auth.clientId;
+    console.log(clientId);
+
+    ga('send', 'event', 'channel', 'channelname', auth.channelId, { cookieFlags: "SameSite=None; Secure" });
 
     const username = await axios.get("https://api.twitch.tv/kraken/users/" + twitchUsername, {
         headers: {
@@ -370,8 +372,29 @@ if (MOBILE_TYPE) {
         minWidth: 0.40 * $(window).width(),
         resize: function(event, ui) {
             ui.position.left = 0;
+            resizeHeader();
         }
     });
+}
+
+function resizeHeader() {
+    var sides = $('#bodyGlobal').width() / $('#bodyGlobal').height();
+    console.log(sides);
+    // if($('#bodyGlobal').width() > 700) {
+    //     $('header').css('height', '10%');
+    // } else if(sides > ) {
+    //     $('header').css('height', '15%');
+    // }
+    // if(sides > 2.2) {
+    //     $('header').css('height', '15%');
+    // } else {
+    //     $('header').css('height', '10%');
+    // }
+    if(sides < 1.2) {
+        $('header').css('height', '10%');
+    } else {
+        $('header').css('height', '15%');
+    }
 }
 
 $(window).on('load resize', function() {
@@ -483,7 +506,6 @@ function timeoutscreen() {
         }
 
         $('#warningLine').show();
-        // console.log('test');
 
         startWindow(false);
     }, TimeoutBeforeGame * 1000);
