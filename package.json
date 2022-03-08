@@ -1,11 +1,12 @@
 {
-  "name": "palmolive-shooter",
+  "name": "palmolive-extension-game",
   "version": "0.0.1",
   "description": "Extension Game for Palmolive",
   "main": "index.js",
   "buildNumber": "63",
   "scripts": {
-    "dev": "run-p start watch:css functions browser",
+    "dev": "run-p start watch:css browser",
+    "dev --server": "run-p start watch:css functions browser",
     "functions": "cd functions && npm run serve",
     "scss": "node-sass --output-style compressed -o public/css public/scss",
     "watch:css": "onchange 'public/scss' -- npm run scss",
@@ -15,22 +16,10 @@
     "build:ext": "rm -rf ./out && cp -R ./public ./out && rm -R ./out/scss && npm run build:zip && rm -rf ./out",
     "build:zip": "cross-env node bin/zip-build.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/winstrike/hyperx-landing.git"
-  },
-  "author": "Winstrike Special Projects",
+  "author": "DNZG",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/winstrike/hyperx-landing/issues"
-  },
-  "homepage": "https://github.com/winstrike/hyperx-landing#readme",
   "dependencies": {
-    "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "firebase": "^8.2.4",
-    "firebase-admin": "^9.4.2",
-    "moment": "^2.29.1",
     "path": "^0.12.7"
   },
   "devDependencies": {

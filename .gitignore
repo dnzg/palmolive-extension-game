@@ -109,3 +109,6 @@ dist
 
 public.zip
 builds
+conf
+package-lock.json
+.firebaserc
